@@ -4,12 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class LocalDialogFunction {
-  BuildContext context;
-
-  LocalDialogFunction({
-    required this.context,
-  });
-
   /// OK Dialog
   ///
   /// This function return an Alert dialog with content and "OK" button
@@ -20,7 +14,8 @@ class LocalDialogFunction {
   /// * Content Text (Required): Content text work as body of alert dialog.
   /// * On Close (Optional): On close function work as function that run after you close the dialog, default will be an empty function.
   /// * Content Align (Optional): Content Align work as alignment of content text, default value will be start alignment.
-  okDialog({
+  static okDialog({
+    required BuildContext context,
     String? title,
     required String contentText,
     Function? onClose,
@@ -61,7 +56,8 @@ class LocalDialogFunction {
   /// * On Decline (Optional): On decline function work as function that run after you decline the option, default will be an empty function.
   /// * On Accept (Required): On accept function work as function that run after you accept the option.
   /// * Content Align (Optional): Content Align work as alignment of content text, default value will be start alignment.
-  optionDialog({
+  static optionDialog({
+    required BuildContext context,
     String? title,
     required String contentText,
     String? declineText,
@@ -110,7 +106,8 @@ class LocalDialogFunction {
   /// * Context (Required): BuildContext required for showDialog function.
   /// * Content Text (Optional): Content text work as body of alert dialog, default value will be "Loading data, please wait...".
   /// * Content Align (Optional): Content Align work as alignment of content text, default value will be start alignment.
-  loadingDialog({
+  static loadingDialog({
+    required BuildContext context,
     String? contentText,
     TextAlign? contentAlign,
   }) => showDialog(
@@ -151,19 +148,14 @@ class LocalDialogFunction {
 }
 
 class LocalRouteNavigator {
-  BuildContext context;
-
-  LocalRouteNavigator({
-    required this.context,
-  });
-
   /// Move To
   ///
   /// This function serve as a command to navigate to new page and the previous page still existed but not active
   /// Parameters:
   /// * Context (Required): BuildContext required for Navigator function.
   /// * Target (Required): Target is a StatefulWidget that intended as target of navigator.
-  moveTo({
+  static moveTo({
+    required BuildContext context,
     required StatefulWidget target,
     Function? callbackFunction,
   }) => Navigator.of(context).push(
@@ -180,7 +172,8 @@ class LocalRouteNavigator {
   /// Parameters:
   /// * Context (Required): BuildContext required for Navigator function.
   /// * Target (Required): Target is a StatefulWidget that intended as target of navigator.
-  replaceWith({
+  static replaceWith({
+    required BuildContext context,
     required StatefulWidget target,
   }) => Navigator.of(context).pushReplacement(
     MaterialPageRoute(builder: (targetContext) => target),
@@ -192,7 +185,8 @@ class LocalRouteNavigator {
   /// Parameters:
   /// * Context (Required): BuildContext required for Navigator function.
   /// * Target (Required): Target is a StatefulWidget that intended as target of navigator.
-  redirectTo({
+  static redirectTo({
+    required BuildContext context,
     required StatefulWidget target,
   }) => Navigator.of(context).pushAndRemoveUntil(
     MaterialPageRoute(builder: (targetContext) => target),
@@ -205,7 +199,8 @@ class LocalRouteNavigator {
   /// Parameters:
   /// * Context (Required): BuildContext required for Navigator function.
   /// * Callback Result (Optional): Callback result is a value that will be carried away after leaving current page.
-  closeBack({
+  static closeBack({
+    required BuildContext context,
     dynamic callbackResult,
   }) => Navigator.of(context).pop(callbackResult);
 }

@@ -1,7 +1,7 @@
 name: local_function_collections
-description: "Local function that simplify navigation, dialog and other function for Flutter"
+description: Local function that simplify navigation, dialog and secure storage for Flutter
 version: 0.0.1
-homepage:
+homepage: https://github.com/senseiRNF/local_function_collections
 
 environment:
   sdk: ^3.5.3

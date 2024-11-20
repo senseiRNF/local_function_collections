@@ -1,3 +1,3 @@
-## 0.0.1
+## 0.0.1 - 2024-11-20
 
-* TODO: Describe initial release.
+* This is the 1st version of Local Function Collections.
