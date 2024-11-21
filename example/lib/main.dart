@@ -42,10 +42,6 @@ class LFCApp extends StatelessWidget {
 class FirstPage extends StatefulWidget {
   const FirstPage({super.key});
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
   @override
   State<FirstPage> createState() => _FirstPageState();
 }
@@ -84,7 +80,7 @@ class _FirstPageState extends State<FirstPage> {
   onLoadingDialogPressed() {
     LocalDialogFunction.loadingDialog(
       context: context,
-      contentText: "This loading will appear for 3 second",
+      contentText: "This loading will disappear in 3 second",
       contentAlign: TextAlign.justify,
     );
 
@@ -95,7 +91,19 @@ class _FirstPageState extends State<FirstPage> {
     });
   }
 
-  onUpdateSecureStorage() => LocalSecureStorage.writeKey(
+  onMoveTo2ndPage() => LocalRouteNavigator.moveTo(
+    context: context,
+    target: const SecondPage(),
+  );
+
+  onMoveTo3rdPage() => LocalRouteNavigator.moveTo(
+    context: context,
+    target: const ThirdPage(
+      isJumped: true,
+    ),
+  );
+
+  onUpdateSecureStorage() async => await LocalSecureStorage.writeKey(
     key: "example",
     data: "This example was created at ${DateTime.now()}",
   );
@@ -110,6 +118,9 @@ class _FirstPageState extends State<FirstPage> {
         ),
       ),
       body: ListView(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 10.0,
+        ),
         children: [
           SizedBox(
             height: MediaQuery.of(context).size.height / 4,
@@ -123,41 +134,92 @@ class _FirstPageState extends State<FirstPage> {
               const SizedBox(
                 height: 10.0,
               ),
-              ElevatedButton(
-                onPressed: () => onOKDialogPressed(),
-                child: const Padding(
-                  padding: EdgeInsets.all(5.0),
-                  child: Text(
-                    "OK Dialog",
+              const Text(
+                "Dialog Collections",
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () => onOKDialogPressed(),
+                      child: const Padding(
+                        padding: EdgeInsets.all(5.0),
+                        child: Text(
+                          "OK",
+                        ),
+                      ),
+                    ),
                   ),
-                ),
+                  const SizedBox(
+                    width: 10.0,
+                  ),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () => onOptionDialogPressed(),
+                      child: const Padding(
+                        padding: EdgeInsets.all(5.0),
+                        child: Text(
+                          "Option",
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 10.0,
+                  ),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () => onLoadingDialogPressed(),
+                      child: const Padding(
+                        padding: EdgeInsets.all(5.0),
+                        child: Text(
+                          "Loading",
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(
                 height: 5.0,
               ),
-              ElevatedButton(
-                onPressed: () => onOptionDialogPressed(),
-                child: const Padding(
-                  padding: EdgeInsets.all(5.0),
-                  child: Text(
-                    "Option Dialog",
+              const Text(
+                "Route Collections",
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () => onMoveTo2ndPage(),
+                      child: const Padding(
+                        padding: EdgeInsets.all(5.0),
+                        child: Text(
+                          "Go to 2nd Page",
+                        ),
+                      ),
+                    ),
                   ),
-                ),
+                  const SizedBox(
+                    width: 10.0,
+                  ),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () => onMoveTo3rdPage(),
+                      child: const Padding(
+                        padding: EdgeInsets.all(5.0),
+                        child: Text(
+                          "Go to 3rd Page",
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(
                 height: 5.0,
               ),
-              ElevatedButton(
-                onPressed: () => onLoadingDialogPressed(),
-                child: const Padding(
-                  padding: EdgeInsets.all(5.0),
-                  child: Text(
-                    "Loading Dialog",
-                  ),
-                ),
-              ),
-              const SizedBox(
-                height: 5.0,
+              const Text(
+                "Secure Storage Collections",
               ),
               ElevatedButton(
                 onPressed: () => onUpdateSecureStorage(),
@@ -184,23 +246,38 @@ class SecondPage extends StatefulWidget {
 }
 
 class _SecondPageState extends State<SecondPage> {
+  String? storageResult;
 
   @override
   void initState() {
     super.initState();
+
+    onCheckSecureStorage();
   }
 
   onCheckSecureStorage() async {
-    String? result = await LocalSecureStorage.readKey(key: "example");
-
-    return result;
+    await LocalSecureStorage.readKey(key: "example").then((result) {
+      setState(() {
+        storageResult = result;
+      });
+    });
   }
 
   onCloseThisPage() => LocalRouteNavigator.closeBack(context: context);
 
-  onReplaceThisPage() => LocalRouteNavigator.replaceWith(
+  onReplaceTo3rdPage() => LocalRouteNavigator.replaceWith(
     context: context,
-    target: const ThirdPage(),
+    target: const ThirdPage(
+      isJumped: true,
+    ),
+  );
+
+  onMoveTo3rdPage() => LocalRouteNavigator.moveTo(
+    context: context,
+    target: const ThirdPage(
+      isJumped: false,
+    ),
+    callbackFunction: (_) => onCheckSecureStorage(),
   );
 
   @override
@@ -227,13 +304,14 @@ class _SecondPageState extends State<SecondPage> {
                 height: 10.0,
               ),
               Text(
-                "Text Saved on Local Secure Storage: ${onCheckSecureStorage() ?? "-"}",
+                "Text Saved on Local Secure Storage: ${storageResult ?? "-"}",
+                textAlign: TextAlign.center,
               ),
               const SizedBox(
                 height: 10.0,
               ),
               ElevatedButton(
-                onPressed: () => onCloseThisPage,
+                onPressed: () => onCloseThisPage(),
                 child: const Padding(
                   padding: EdgeInsets.all(5.0),
                   child: Text(
@@ -245,7 +323,19 @@ class _SecondPageState extends State<SecondPage> {
                 height: 5.0,
               ),
               ElevatedButton(
-                onPressed: () => onReplaceThisPage(),
+                onPressed: () => onMoveTo3rdPage(),
+                child: const Padding(
+                  padding: EdgeInsets.all(5.0),
+                  child: Text(
+                    "Go to 3rd Page",
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 5.0,
+              ),
+              ElevatedButton(
+                onPressed: () => onReplaceTo3rdPage(),
                 child: const Padding(
                   padding: EdgeInsets.all(5.0),
                   child: Text(
@@ -262,23 +352,33 @@ class _SecondPageState extends State<SecondPage> {
 }
 
 class ThirdPage extends StatefulWidget {
-  const ThirdPage({super.key});
+  final bool isJumped;
+
+  const ThirdPage({
+    super.key,
+    required this.isJumped,
+  });
 
   @override
   State<ThirdPage> createState() => _ThirdPageState();
 }
 
 class _ThirdPageState extends State<ThirdPage> {
+  String? storageResult;
 
   @override
   void initState() {
     super.initState();
+
+    onCheckSecureStorage();
   }
 
   onCheckSecureStorage() async {
-    String? result = await LocalSecureStorage.readKey(key: "example");
-
-    return result;
+    await LocalSecureStorage.readKey(key: "example").then((result) {
+      setState(() {
+        storageResult = result;
+      });
+    });
   }
 
   onCloseThisPage() => LocalRouteNavigator.closeBack(context: context);
@@ -287,6 +387,8 @@ class _ThirdPageState extends State<ThirdPage> {
     context: context,
     target: const FirstPage(),
   );
+
+  onClearSecureStorage() async => await LocalSecureStorage.clearKey().then((_) => onCheckSecureStorage());
 
   @override
   Widget build(BuildContext context) {
@@ -312,17 +414,18 @@ class _ThirdPageState extends State<ThirdPage> {
                 height: 10.0,
               ),
               Text(
-                "Text Saved on Local Secure Storage: ${onCheckSecureStorage() ?? "-"}",
+                "Text Saved on Local Secure Storage: ${storageResult ?? "-"}",
+                textAlign: TextAlign.center,
               ),
               const SizedBox(
                 height: 10.0,
               ),
               ElevatedButton(
-                onPressed: () => onCloseThisPage,
+                onPressed: () => onClearSecureStorage(),
                 child: const Padding(
                   padding: EdgeInsets.all(5.0),
                   child: Text(
-                    "Back to 2nd Page",
+                    "Clear Secure Storage",
                   ),
                 ),
               ),
@@ -330,7 +433,23 @@ class _ThirdPageState extends State<ThirdPage> {
                 height: 5.0,
               ),
               ElevatedButton(
-                onPressed: () => onRedirectThisPage,
+                onPressed: () => onCloseThisPage(),
+                child: Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: Text(
+                    widget.isJumped == true
+                        ? "Back to 1st Page"
+                        : "Back to 2nd Page",
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 5.0,
+              ),
+              widget.isJumped == true ?
+              const Material() :
+              ElevatedButton(
+                onPressed: () => onRedirectThisPage(),
                 child: const Padding(
                   padding: EdgeInsets.all(5.0),
                   child: Text(

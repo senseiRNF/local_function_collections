@@ -92,11 +92,15 @@ class LocalDialogFunction {
         ],
       );
     },
-  ).then((result) => result != null && result == true
-      ? onAccept() ?? {}
-      : result != null && result == false
-      ? onDecline ?? {}
-      : {});
+  ).then((result) {
+    if(result != null && result == true) {
+      onAccept();
+    } else if(result != null && result == false) {
+      if(onDecline != null) {
+        onDecline();
+      }
+    }
+  });
 
   /// Loading Dialog
   ///
