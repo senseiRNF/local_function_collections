@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:local_function_collections/local_function_collections.dart';
 
@@ -8,31 +10,15 @@ void main() {
 class LFCApp extends StatelessWidget {
   const LFCApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'LFC Demo App',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.blueAccent,
+          seedColor: Colors.lightBlue,
         ),
-        useMaterial3: false,
+        useMaterial3: true,
       ),
       home: const FirstPage(),
     );
@@ -107,6 +93,48 @@ class _FirstPageState extends State<FirstPage> {
     key: "example",
     data: "This example was created at ${DateTime.now()}",
   );
+
+  onSubmitRequestPressed({
+    required RequestType type,
+    required String url,
+  }) async {
+    await LocalAPIsRequest.submitRequest(
+      requestType: type,
+      apisURL: url,
+      errorHandler: (exception, stackTrace) {
+        LocalDialogFunction.okDialog(
+          context: context,
+          contentText: "Error when submitting request: $exception",
+        );
+      },
+      usingloadingDialog: context,
+    ).then((result) {
+      if(mounted) {
+        if(result != null) {
+          String? encodedMap;
+          List encodedListMap = [];
+
+          if(result.data is Map) {
+             encodedMap = jsonEncode(result.data);
+          } else if(result.data is List) {
+            for(Map<String, dynamic> data in result.data) {
+              encodedListMap.add(jsonEncode(data));
+            }
+          }
+
+          LocalDialogFunction.okDialog(
+            context: context,
+            title: "Status Code ${result.statusCode}",
+            contentText:
+            encodedListMap.isNotEmpty
+                ? encodedListMap.first :
+            encodedMap
+                ?? "",
+          );
+        }
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -229,6 +257,90 @@ class _FirstPageState extends State<FirstPage> {
                     "Update Secure Storage Timestamp",
                   ),
                 ),
+              ),
+              const Text(
+                "APIs Request Collections",
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () => onSubmitRequestPressed(
+                        type: RequestType.get,
+                        url: "https://dummyjson.com/test",
+                      ),
+                      child: const Padding(
+                        padding: EdgeInsets.all(5.0),
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            "GET",
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 10.0,
+                  ),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () => onSubmitRequestPressed(
+                        type: RequestType.post,
+                        url: "https://dummyjson.com/test",
+                      ),
+                      child: const Padding(
+                        padding: EdgeInsets.all(5.0),
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            "POST",
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 10.0,
+                  ),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () => onSubmitRequestPressed(
+                        type: RequestType.put,
+                        url: "https://dummyjson.com/test",
+                      ),
+                      child: const Padding(
+                        padding: EdgeInsets.all(5.0),
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            "PUT",
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 10.0,
+                  ),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () => onSubmitRequestPressed(
+                        type: RequestType.delete,
+                        url: "https://dummyjson.com/test",
+                      ),
+                      child: const Padding(
+                        padding: EdgeInsets.all(5.0),
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            "DELETE",
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

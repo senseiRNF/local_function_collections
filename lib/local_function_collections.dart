@@ -1,7 +1,10 @@
-library local_function_collections;
-
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
+enum RequestType {
+  get, post, put, delete
+}
 
 class LocalDialogFunction {
   /// OK Dialog
@@ -14,13 +17,13 @@ class LocalDialogFunction {
   /// * Content Text (Required): Content text work as body of alert dialog.
   /// * On Close (Optional): On close function work as function that run after you close the dialog, default will be an empty function.
   /// * Content Align (Optional): Content Align work as alignment of content text, default value will be start alignment.
-  static okDialog({
+  static Future okDialog({
     required BuildContext context,
     String? title,
     required String contentText,
     Function? onClose,
     TextAlign? contentAlign,
-  }) => showDialog(
+  }) async => showDialog(
     context: context,
     builder: (dialogContext) {
       return AlertDialog(
@@ -56,7 +59,7 @@ class LocalDialogFunction {
   /// * On Decline (Optional): On decline function work as function that run after you decline the option, default will be an empty function.
   /// * On Accept (Required): On accept function work as function that run after you accept the option.
   /// * Content Align (Optional): Content Align work as alignment of content text, default value will be start alignment.
-  static optionDialog({
+  static Future optionDialog({
     required BuildContext context,
     String? title,
     required String contentText,
@@ -65,7 +68,7 @@ class LocalDialogFunction {
     Function? onDecline,
     required Function onAccept,
     TextAlign? contentAlign,
-  }) => showDialog(
+  }) async => showDialog(
     context: context,
     builder: (dialogContext) {
       return AlertDialog(
@@ -110,11 +113,11 @@ class LocalDialogFunction {
   /// * Context (Required): BuildContext required for showDialog function.
   /// * Content Text (Optional): Content text work as body of alert dialog, default value will be "Loading data, please wait...".
   /// * Content Align (Optional): Content Align work as alignment of content text, default value will be start alignment.
-  static loadingDialog({
+  static Future loadingDialog({
     required BuildContext context,
     String? contentText,
     TextAlign? contentAlign,
-  }) => showDialog(
+  }) async => showDialog(
     context: context,
     barrierDismissible: false,
     builder: (dialogBuilder) {
@@ -158,11 +161,12 @@ class LocalRouteNavigator {
   /// Parameters:
   /// * Context (Required): BuildContext required for Navigator function.
   /// * Target (Required): Target is a StatefulWidget that intended as target of navigator.
-  static moveTo({
+  /// * Callback Function (Optional): After going back from previous page, this parameter will run a function.
+  static Future moveTo({
     required BuildContext context,
     required StatefulWidget target,
     Function? callbackFunction,
-  }) => Navigator.of(context).push(
+  }) async => Navigator.of(context).push(
       MaterialPageRoute(
         builder: (targetContext) => target,
       )
@@ -176,10 +180,10 @@ class LocalRouteNavigator {
   /// Parameters:
   /// * Context (Required): BuildContext required for Navigator function.
   /// * Target (Required): Target is a StatefulWidget that intended as target of navigator.
-  static replaceWith({
+  static Future replaceWith({
     required BuildContext context,
     required StatefulWidget target,
-  }) => Navigator.of(context).pushReplacement(
+  }) async => Navigator.of(context).pushReplacement(
     MaterialPageRoute(builder: (targetContext) => target),
   );
 
@@ -189,10 +193,10 @@ class LocalRouteNavigator {
   /// Parameters:
   /// * Context (Required): BuildContext required for Navigator function.
   /// * Target (Required): Target is a StatefulWidget that intended as target of navigator.
-  static redirectTo({
+  static Future redirectTo({
     required BuildContext context,
     required StatefulWidget target,
-  }) => Navigator.of(context).pushAndRemoveUntil(
+  }) async => Navigator.of(context).pushAndRemoveUntil(
     MaterialPageRoute(builder: (targetContext) => target),
         (_) => false,
   );
@@ -203,10 +207,10 @@ class LocalRouteNavigator {
   /// Parameters:
   /// * Context (Required): BuildContext required for Navigator function.
   /// * Callback Result (Optional): Callback result is a value that will be carried away after leaving current page.
-  static closeBack({
+  static Future closeBack({
     required BuildContext context,
     dynamic callbackResult,
-  }) => Navigator.of(context).pop(callbackResult);
+  }) async => Navigator.of(context).pop(callbackResult);
 }
 
 class LocalSecureStorage {
@@ -267,6 +271,179 @@ class LocalSecureStorage {
     await _secureStorage.deleteAll().then((_) {
       result = true;
     });
+
+    return result;
+  }
+}
+
+class LocalAPIsRequest {
+  /// Submit Request
+  ///
+  /// This function will handle a network request using Dio
+  ///
+  /// Parameters:
+  /// * Request Type (Required): Determine request type for submitting request (GET, POST, PUT or DELETE).
+  /// * APIs URL (Required): URL required to reach APIs address.
+  /// * Header Request (Optional): Header that set for request.
+  /// * Parameters (Required): Query Parameter that will be carried when reaching APIs address.
+  /// * Body Data (Required): Map of data that will be carried when reaching APIs address.
+  /// * Connection Timeout in Second (Optional): Timeout set in second, to determined how long request could try reach the APIs address before it's declared as timeout.
+  /// * Receive Timeout in Second (Optional): Timeout set in second, to determined how long response could received before it's declared as timeout.
+  /// * Cancel Token (Optional): If this request run at background and needs to handle cancellation, this parameter need to be declared.
+  /// * Error Handler (Optional): Handling an error request and carried DioException and StackTrace result value. You could utilize this function to handle error.
+  /// * Using Loading Dialog (Optional): Will show and handle a loading dialog from Local Dialog Function.
+  static Future<Response?> submitRequest({
+    required RequestType requestType,
+    required String apisURL,
+    Map<String, dynamic>? headerRequest,
+    Map<String, dynamic>? parameters,
+    Map<String, dynamic>? bodyData,
+    int? connectionTimeoutInSecond,
+    int? receiveTimeoutInSecond,
+    CancelToken? cancelToken,
+    Function(DioException, StackTrace)? errorHandler,
+    BuildContext? usingloadingDialog,
+  }) async {
+    Response? result;
+
+    Dio dio = Dio();
+
+    dio.options = BaseOptions(
+      headers: headerRequest,
+      connectTimeout: Duration(
+        seconds: connectionTimeoutInSecond
+            ?? 30,
+      ),
+      receiveTimeout: Duration(
+        seconds: receiveTimeoutInSecond
+            ?? 30,
+      ),
+    );
+
+    if(usingloadingDialog != null) {
+      LocalDialogFunction.loadingDialog(
+        context: usingloadingDialog,
+      );
+    }
+
+    switch (requestType) {
+      case RequestType.get:
+        await dio.get(
+          apisURL,
+          queryParameters: parameters,
+          data: bodyData,
+          cancelToken: cancelToken,
+        ).then((requestResult) {
+          if(usingloadingDialog != null && usingloadingDialog.mounted) {
+            LocalRouteNavigator.closeBack(
+              context: usingloadingDialog,
+            );
+          }
+
+          result = requestResult;
+        }).onError<DioException>((err, stackTrace) {
+          if(usingloadingDialog != null && usingloadingDialog.mounted) {
+            LocalRouteNavigator.closeBack(
+              context: usingloadingDialog,
+            );
+          }
+
+          if(errorHandler != null) {
+            errorHandler(
+              err,
+              stackTrace,
+            );
+          }
+        });
+        break;
+      case RequestType.post:
+        await dio.post(
+          apisURL,
+          queryParameters: parameters,
+          data: bodyData,
+          cancelToken: cancelToken,
+        ).then((requestResult) {
+          if(usingloadingDialog != null && usingloadingDialog.mounted) {
+            LocalRouteNavigator.closeBack(
+              context: usingloadingDialog,
+            );
+          }
+
+          result = requestResult;
+        }).onError<DioException>((err, stackTrace) {
+          if(usingloadingDialog != null && usingloadingDialog.mounted) {
+            LocalRouteNavigator.closeBack(
+              context: usingloadingDialog,
+            );
+          }
+
+          if(errorHandler != null) {
+            errorHandler(
+              err,
+              stackTrace,
+            );
+          }
+        });
+        break;
+      case RequestType.put:
+        await dio.put(
+          apisURL,
+          queryParameters: parameters,
+          data: bodyData,
+          cancelToken: cancelToken,
+        ).then((requestResult) {
+          if(usingloadingDialog != null && usingloadingDialog.mounted) {
+            LocalRouteNavigator.closeBack(
+              context: usingloadingDialog,
+            );
+          }
+
+          result = requestResult;
+        }).onError<DioException>((err, stackTrace) {
+          if(usingloadingDialog != null && usingloadingDialog.mounted) {
+            LocalRouteNavigator.closeBack(
+              context: usingloadingDialog,
+            );
+          }
+
+          if(errorHandler != null) {
+            errorHandler(
+              err,
+              stackTrace,
+            );
+          }
+        });
+        break;
+      case RequestType.delete:
+        await dio.delete(
+          apisURL,
+          queryParameters: parameters,
+          data: bodyData,
+          cancelToken: cancelToken,
+        ).then((requestResult) {
+          if(usingloadingDialog != null && usingloadingDialog.mounted) {
+            LocalRouteNavigator.closeBack(
+              context: usingloadingDialog,
+            );
+          }
+
+          result = requestResult;
+        }).onError<DioException>((err, stackTrace) {
+          if(usingloadingDialog != null && usingloadingDialog.mounted) {
+            LocalRouteNavigator.closeBack(
+              context: usingloadingDialog,
+            );
+          }
+
+          if(errorHandler != null) {
+            errorHandler(
+              err,
+              stackTrace,
+            );
+          }
+        });
+        break;
+    }
 
     return result;
   }
