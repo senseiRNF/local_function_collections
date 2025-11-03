@@ -39,28 +39,30 @@ class _FirstPageState extends State<FirstPage> {
   }
 
   onOKDialogPressed() => LocalDialogFunction.okDialog(
-    context: context,
-    contentText: "Hello Users!!!",
-    contentAlign: TextAlign.justify,
-  );
+        context: context,
+        contentText: "Hello Users!!!",
+        contentAlign: TextAlign.justify,
+      );
 
   onOptionDialogPressed() => LocalDialogFunction.optionDialog(
-    context: context,
-    contentText: "Do you like this package?",
-    onAccept: () => LocalDialogFunction.okDialog(
-      context: context,
-      title: "Thank You!!!",
-      contentText: "Thank you for appreciating our package!, soon there will be another new package launched.",
-      contentAlign: TextAlign.justify,
-    ),
-    onDecline: () => LocalDialogFunction.okDialog(
-      context: context,
-      title: "We're Sorry",
-      contentText: "We're sorry if our package isn't enough for you :(, for any critiques you can DM me on Instagram: @raznovrnf or my LinkedIn: Razy Firdana.",
-      contentAlign: TextAlign.justify,
-    ),
-    contentAlign: TextAlign.justify,
-  );
+        context: context,
+        contentText: "Do you like this package?",
+        onAccept: () => LocalDialogFunction.okDialog(
+          context: context,
+          title: "Thank You!!!",
+          contentText:
+              "Thank you for appreciating our package!, soon there will be another new package launched.",
+          contentAlign: TextAlign.justify,
+        ),
+        onDecline: () => LocalDialogFunction.okDialog(
+          context: context,
+          title: "We're Sorry",
+          contentText:
+              "We're sorry if our package isn't enough for you :(, for any critiques you can DM me on Instagram: @raznovrnf or my LinkedIn: Razy Firdana.",
+          contentAlign: TextAlign.justify,
+        ),
+        contentAlign: TextAlign.justify,
+      );
 
   onLoadingDialogPressed() {
     LocalDialogFunction.loadingDialog(
@@ -70,28 +72,28 @@ class _FirstPageState extends State<FirstPage> {
     );
 
     Future.delayed(const Duration(seconds: 3), () {
-      if(mounted) {
+      if (mounted) {
         LocalRouteNavigator.closeBack(context: context);
       }
     });
   }
 
   onMoveTo2ndPage() => LocalRouteNavigator.moveTo(
-    context: context,
-    target: const SecondPage(),
-  );
+        context: context,
+        target: const SecondPage(),
+      );
 
   onMoveTo3rdPage() => LocalRouteNavigator.moveTo(
-    context: context,
-    target: const ThirdPage(
-      isJumped: true,
-    ),
-  );
+        context: context,
+        target: const ThirdPage(
+          isJumped: true,
+        ),
+      );
 
   onUpdateSecureStorage() async => await LocalSecureStorage.writeKey(
-    key: "example",
-    data: "This example was created at ${DateTime.now()}",
-  );
+        key: "example",
+        data: "This example was created at ${DateTime.now()}",
+      );
 
   onSubmitRequestPressed({
     required RequestType type,
@@ -111,15 +113,15 @@ class _FirstPageState extends State<FirstPage> {
       cancellationToken: cancellationToken,
       usingloadingDialog: context,
     ).then((result) {
-      if(mounted) {
-        if(result != null) {
+      if (mounted) {
+        if (result != null) {
           String? encodedMap;
           List encodedListMap = [];
 
-          if(result.data is Map) {
+          if (result.data is Map) {
             encodedMap = jsonEncode(result.data);
-          } else if(result.data is List) {
-            for(Map<String, dynamic> data in result.data) {
+          } else if (result.data is List) {
+            for (Map<String, dynamic> data in result.data) {
               encodedListMap.add(jsonEncode(data));
             }
           }
@@ -127,11 +129,9 @@ class _FirstPageState extends State<FirstPage> {
           LocalDialogFunction.okDialog(
             context: context,
             title: "Status Code ${result.statusCode}",
-            contentText:
-            encodedListMap.isNotEmpty
-                ? encodedListMap.first :
-            encodedMap
-                ?? "",
+            contentText: encodedListMap.isNotEmpty
+                ? encodedListMap.first
+                : encodedMap ?? "",
           );
         }
       }
@@ -380,19 +380,19 @@ class _SecondPageState extends State<SecondPage> {
   onCloseThisPage() => LocalRouteNavigator.closeBack(context: context);
 
   onReplaceTo3rdPage() => LocalRouteNavigator.replaceWith(
-    context: context,
-    target: const ThirdPage(
-      isJumped: true,
-    ),
-  );
+        context: context,
+        target: const ThirdPage(
+          isJumped: true,
+        ),
+      );
 
   onMoveTo3rdPage() => LocalRouteNavigator.moveTo(
-    context: context,
-    target: const ThirdPage(
-      isJumped: false,
-    ),
-    callbackFunction: (_) => onCheckSecureStorage(),
-  );
+        context: context,
+        target: const ThirdPage(
+          isJumped: false,
+        ),
+        callbackFunction: (_) => onCheckSecureStorage(),
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -498,11 +498,12 @@ class _ThirdPageState extends State<ThirdPage> {
   onCloseThisPage() => LocalRouteNavigator.closeBack(context: context);
 
   onRedirectThisPage() => LocalRouteNavigator.redirectTo(
-    context: context,
-    target: const FirstPage(),
-  );
+        context: context,
+        target: const FirstPage(),
+      );
 
-  onClearSecureStorage() async => await LocalSecureStorage.clearKey().then((_) => onCheckSecureStorage());
+  onClearSecureStorage() async =>
+      await LocalSecureStorage.clearKey().then((_) => onCheckSecureStorage());
 
   @override
   Widget build(BuildContext context) {
@@ -560,17 +561,17 @@ class _ThirdPageState extends State<ThirdPage> {
               const SizedBox(
                 height: 5.0,
               ),
-              widget.isJumped == true ?
-              const Material() :
-              ElevatedButton(
-                onPressed: () => onRedirectThisPage(),
-                child: const Padding(
-                  padding: EdgeInsets.all(5.0),
-                  child: Text(
-                    "Redirect to 1st Page",
-                  ),
-                ),
-              ),
+              widget.isJumped == true
+                  ? const Material()
+                  : ElevatedButton(
+                      onPressed: () => onRedirectThisPage(),
+                      child: const Padding(
+                        padding: EdgeInsets.all(5.0),
+                        child: Text(
+                          "Redirect to 1st Page",
+                        ),
+                      ),
+                    ),
             ],
           ),
         ],

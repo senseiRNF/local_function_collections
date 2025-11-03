@@ -2,9 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-enum RequestType {
-  get, post, put, delete
-}
+enum RequestType { get, post, put, delete }
 
 class CancellationToken extends CancelToken {}
 
@@ -25,28 +23,27 @@ class LocalDialogFunction {
     required String contentText,
     Function? onClose,
     TextAlign? contentAlign,
-  }) async => showDialog(
-    context: context,
-    builder: (dialogContext) {
-      return AlertDialog(
-        title: title != null
-            ? Text(title)
-            : null,
-        content: Text(
-          contentText,
-          textAlign: contentAlign ?? TextAlign.start,
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text(
-              "OK",
+  }) async =>
+      showDialog(
+        context: context,
+        builder: (dialogContext) {
+          return AlertDialog(
+            title: title != null ? Text(title) : null,
+            content: Text(
+              contentText,
+              textAlign: contentAlign ?? TextAlign.start,
             ),
-          ),
-        ],
-      );
-    },
-  ).then((_) => onClose != null ? onClose() : {});
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text(
+                  "OK",
+                ),
+              ),
+            ],
+          );
+        },
+      ).then((_) => onClose != null ? onClose() : {});
 
   /// Option Dialog
   ///
@@ -70,42 +67,41 @@ class LocalDialogFunction {
     Function? onDecline,
     required Function onAccept,
     TextAlign? contentAlign,
-  }) async => showDialog(
-    context: context,
-    builder: (dialogContext) {
-      return AlertDialog(
-        title: title != null
-            ? Text(title)
-            : null,
-        content: Text(
-          contentText,
-          textAlign: TextAlign.center,
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: Text(
-              declineText ?? "No",
+  }) async =>
+      showDialog(
+        context: context,
+        builder: (dialogContext) {
+          return AlertDialog(
+            title: title != null ? Text(title) : null,
+            content: Text(
+              contentText,
+              textAlign: TextAlign.center,
             ),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: Text(
-              acceptText ?? "Yes",
-            ),
-          ),
-        ],
-      );
-    },
-  ).then((result) {
-    if(result != null && result == true) {
-      onAccept();
-    } else if(result != null && result == false) {
-      if(onDecline != null) {
-        onDecline();
-      }
-    }
-  });
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: Text(
+                  declineText ?? "No",
+                ),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: Text(
+                  acceptText ?? "Yes",
+                ),
+              ),
+            ],
+          );
+        },
+      ).then((result) {
+        if (result != null && result == true) {
+          onAccept();
+        } else if (result != null && result == false) {
+          if (onDecline != null) {
+            onDecline();
+          }
+        }
+      });
 
   /// Loading Dialog
   ///
@@ -120,52 +116,49 @@ class LocalDialogFunction {
     String? contentText,
     TextAlign? contentAlign,
     CancelToken? cancellationToken,
-  }) async => showDialog(
-    context: context,
-    barrierDismissible: cancellationToken != null
-        ? true
-        : false,
-    builder: (dialogBuilder) {
-      return PopScope(
-        canPop: cancellationToken != null
-            ? true
-            : false,
-        onPopInvokedWithResult: (didPop, result) {
-          if(didPop == true && result != "completed") {
-            if(cancellationToken != null) {
-              cancellationToken.cancel();
-            }
-          }
+  }) async =>
+      showDialog(
+        context: context,
+        barrierDismissible: cancellationToken != null ? true : false,
+        builder: (dialogBuilder) {
+          return PopScope(
+            canPop: cancellationToken != null ? true : false,
+            onPopInvokedWithResult: (didPop, result) {
+              if (didPop == true && result != "completed") {
+                if (cancellationToken != null) {
+                  cancellationToken.cancel();
+                }
+              }
+            },
+            child: AlertDialog(
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    contentText ?? "Loading data, please wait...",
+                    textAlign: contentAlign ?? TextAlign.start,
+                  ),
+                  const SizedBox(
+                    height: 10.0,
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(
+                      vertical: 20.0,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CircularProgressIndicator(),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
         },
-        child: AlertDialog(
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(
-                contentText ?? "Loading data, please wait...",
-                textAlign: contentAlign ?? TextAlign.start,
-              ),
-              const SizedBox(
-                height: 10.0,
-              ),
-              const Padding(
-                padding: EdgeInsets.symmetric(
-                  vertical: 20.0,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    CircularProgressIndicator(),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
       );
-    },
-  );
 }
 
 class LocalRouteNavigator {
@@ -180,13 +173,13 @@ class LocalRouteNavigator {
     required BuildContext context,
     required Widget target,
     Function? callbackFunction,
-  }) async => Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (targetContext) => target,
-      )
-  ).then((callbackResult) => callbackFunction != null
-      ? callbackFunction(callbackResult)
-      : {});
+  }) async =>
+      Navigator.of(context)
+          .push(MaterialPageRoute(
+            builder: (targetContext) => target,
+          ))
+          .then((callbackResult) =>
+              callbackFunction != null ? callbackFunction(callbackResult) : {});
 
   /// Replace With
   ///
@@ -197,9 +190,10 @@ class LocalRouteNavigator {
   static Future replaceWith({
     required BuildContext context,
     required Widget target,
-  }) async => Navigator.of(context).pushReplacement(
-    MaterialPageRoute(builder: (targetContext) => target),
-  );
+  }) async =>
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (targetContext) => target),
+      );
 
   /// Redirect To
   ///
@@ -210,10 +204,11 @@ class LocalRouteNavigator {
   static Future redirectTo({
     required BuildContext context,
     required Widget target,
-  }) async => Navigator.of(context).pushAndRemoveUntil(
-    MaterialPageRoute(builder: (targetContext) => target),
+  }) async =>
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (targetContext) => target),
         (_) => false,
-  );
+      );
 
   /// Close Back
   ///
@@ -224,7 +219,8 @@ class LocalRouteNavigator {
   static Future closeBack({
     required BuildContext context,
     dynamic callbackResult,
-  }) async => Navigator.of(context).pop(callbackResult);
+  }) async =>
+      Navigator.of(context).pop(callbackResult);
 }
 
 class LocalSecureStorage {
@@ -236,10 +232,12 @@ class LocalSecureStorage {
   static Future<bool> writeKey({required String key, String? data}) async {
     bool result = false;
 
-    await _secureStorage.write(
+    await _secureStorage
+        .write(
       key: key,
       value: data,
-    ).then((_) {
+    )
+        .then((_) {
       result = true;
     });
 
@@ -252,9 +250,11 @@ class LocalSecureStorage {
   static Future<String?> readKey({required String key}) async {
     String? result;
 
-    await _secureStorage.read(
+    await _secureStorage
+        .read(
       key: key,
-    ).then((readResult) {
+    )
+        .then((readResult) {
       result = readResult;
     });
 
@@ -267,9 +267,11 @@ class LocalSecureStorage {
   static Future<bool> deleteKey({required String key}) async {
     bool result = false;
 
-    await _secureStorage.delete(
+    await _secureStorage
+        .delete(
       key: key,
-    ).then((_) {
+    )
+        .then((_) {
       result = true;
     });
 
@@ -325,16 +327,14 @@ class LocalAPIsRequest {
     dio.options = BaseOptions(
       headers: headerRequest,
       connectTimeout: Duration(
-        seconds: connectionTimeoutInSecond
-            ?? 30,
+        seconds: connectionTimeoutInSecond ?? 30,
       ),
       receiveTimeout: Duration(
-        seconds: receiveTimeoutInSecond
-            ?? 30,
+        seconds: receiveTimeoutInSecond ?? 30,
       ),
     );
 
-    if(usingloadingDialog != null) {
+    if (usingloadingDialog != null) {
       LocalDialogFunction.loadingDialog(
         context: usingloadingDialog,
         cancellationToken: cancellationToken,
@@ -343,13 +343,15 @@ class LocalAPIsRequest {
 
     switch (requestType) {
       case RequestType.get:
-        await dio.get(
+        await dio
+            .get(
           apisURL,
           queryParameters: parameters,
           data: bodyData,
           cancelToken: cancellationToken,
-        ).then((requestResult) {
-          if(usingloadingDialog != null && usingloadingDialog.mounted) {
+        )
+            .then((requestResult) {
+          if (usingloadingDialog != null && usingloadingDialog.mounted) {
             LocalRouteNavigator.closeBack(
               context: usingloadingDialog,
               callbackResult: "completed",
@@ -358,8 +360,8 @@ class LocalAPIsRequest {
 
           result = requestResult;
         }).onError<DioException>((err, stackTrace) {
-          if(usingloadingDialog != null && usingloadingDialog.mounted) {
-            if(err.type != DioExceptionType.cancel) {
+          if (usingloadingDialog != null && usingloadingDialog.mounted) {
+            if (err.type != DioExceptionType.cancel) {
               LocalRouteNavigator.closeBack(
                 context: usingloadingDialog,
                 callbackResult: "completed",
@@ -367,7 +369,7 @@ class LocalAPIsRequest {
             }
           }
 
-          if(errorHandler != null) {
+          if (errorHandler != null) {
             errorHandler(
               err,
               stackTrace,
@@ -376,13 +378,15 @@ class LocalAPIsRequest {
         });
         break;
       case RequestType.post:
-        await dio.post(
+        await dio
+            .post(
           apisURL,
           queryParameters: parameters,
           data: bodyData,
           cancelToken: cancellationToken,
-        ).then((requestResult) {
-          if(usingloadingDialog != null && usingloadingDialog.mounted) {
+        )
+            .then((requestResult) {
+          if (usingloadingDialog != null && usingloadingDialog.mounted) {
             LocalRouteNavigator.closeBack(
               context: usingloadingDialog,
               callbackResult: "completed",
@@ -391,8 +395,8 @@ class LocalAPIsRequest {
 
           result = requestResult;
         }).onError<DioException>((err, stackTrace) {
-          if(usingloadingDialog != null && usingloadingDialog.mounted) {
-            if(err.type != DioExceptionType.cancel) {
+          if (usingloadingDialog != null && usingloadingDialog.mounted) {
+            if (err.type != DioExceptionType.cancel) {
               LocalRouteNavigator.closeBack(
                 context: usingloadingDialog,
                 callbackResult: "completed",
@@ -400,7 +404,7 @@ class LocalAPIsRequest {
             }
           }
 
-          if(errorHandler != null) {
+          if (errorHandler != null) {
             errorHandler(
               err,
               stackTrace,
@@ -409,13 +413,15 @@ class LocalAPIsRequest {
         });
         break;
       case RequestType.put:
-        await dio.put(
+        await dio
+            .put(
           apisURL,
           queryParameters: parameters,
           data: bodyData,
           cancelToken: cancellationToken,
-        ).then((requestResult) {
-          if(usingloadingDialog != null && usingloadingDialog.mounted) {
+        )
+            .then((requestResult) {
+          if (usingloadingDialog != null && usingloadingDialog.mounted) {
             LocalRouteNavigator.closeBack(
               context: usingloadingDialog,
               callbackResult: "completed",
@@ -424,8 +430,8 @@ class LocalAPIsRequest {
 
           result = requestResult;
         }).onError<DioException>((err, stackTrace) {
-          if(usingloadingDialog != null && usingloadingDialog.mounted) {
-            if(err.type != DioExceptionType.cancel) {
+          if (usingloadingDialog != null && usingloadingDialog.mounted) {
+            if (err.type != DioExceptionType.cancel) {
               LocalRouteNavigator.closeBack(
                 context: usingloadingDialog,
                 callbackResult: "completed",
@@ -433,7 +439,7 @@ class LocalAPIsRequest {
             }
           }
 
-          if(errorHandler != null) {
+          if (errorHandler != null) {
             errorHandler(
               err,
               stackTrace,
@@ -442,13 +448,15 @@ class LocalAPIsRequest {
         });
         break;
       case RequestType.delete:
-        await dio.delete(
+        await dio
+            .delete(
           apisURL,
           queryParameters: parameters,
           data: bodyData,
           cancelToken: cancellationToken,
-        ).then((requestResult) {
-          if(usingloadingDialog != null && usingloadingDialog.mounted) {
+        )
+            .then((requestResult) {
+          if (usingloadingDialog != null && usingloadingDialog.mounted) {
             LocalRouteNavigator.closeBack(
               context: usingloadingDialog,
               callbackResult: "completed",
@@ -457,8 +465,8 @@ class LocalAPIsRequest {
 
           result = requestResult;
         }).onError<DioException>((err, stackTrace) {
-          if(usingloadingDialog != null && usingloadingDialog.mounted) {
-            if(err.type != DioExceptionType.cancel) {
+          if (usingloadingDialog != null && usingloadingDialog.mounted) {
+            if (err.type != DioExceptionType.cancel) {
               LocalRouteNavigator.closeBack(
                 context: usingloadingDialog,
                 callbackResult: "completed",
@@ -466,7 +474,7 @@ class LocalAPIsRequest {
             }
           }
 
-          if(errorHandler != null) {
+          if (errorHandler != null) {
             errorHandler(
               err,
               stackTrace,
