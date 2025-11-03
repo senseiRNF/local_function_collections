@@ -6,6 +6,8 @@ enum RequestType {
   get, post, put, delete
 }
 
+class CancellationToken extends CancelToken {}
+
 class LocalDialogFunction {
   /// OK Dialog
   ///
@@ -117,12 +119,24 @@ class LocalDialogFunction {
     required BuildContext context,
     String? contentText,
     TextAlign? contentAlign,
+    CancelToken? cancellationToken,
   }) async => showDialog(
     context: context,
-    barrierDismissible: false,
+    barrierDismissible: cancellationToken != null
+        ? true
+        : false,
     builder: (dialogBuilder) {
       return PopScope(
-        canPop: false,
+        canPop: cancellationToken != null
+            ? true
+            : false,
+        onPopInvokedWithResult: (didPop, result) {
+          if(didPop == true && result != "completed") {
+            if(cancellationToken != null) {
+              cancellationToken.cancel();
+            }
+          }
+        },
         child: AlertDialog(
           content: Column(
             mainAxisSize: MainAxisSize.min,
@@ -160,11 +174,11 @@ class LocalRouteNavigator {
   /// This function serve as a command to navigate to new page and the previous page still existed but not active
   /// Parameters:
   /// * Context (Required): BuildContext required for Navigator function.
-  /// * Target (Required): Target is a StatefulWidget that intended as target of navigator.
+  /// * Target (Required): Target is a Widget that intended as target of navigator.
   /// * Callback Function (Optional): After going back from previous page, this parameter will run a function.
   static Future moveTo({
     required BuildContext context,
-    required StatefulWidget target,
+    required Widget target,
     Function? callbackFunction,
   }) async => Navigator.of(context).push(
       MaterialPageRoute(
@@ -179,10 +193,10 @@ class LocalRouteNavigator {
   /// This function serve as a command to navigate to new page but the previous page are terminated
   /// Parameters:
   /// * Context (Required): BuildContext required for Navigator function.
-  /// * Target (Required): Target is a StatefulWidget that intended as target of navigator.
+  /// * Target (Required): Target is a Widget that intended as target of navigator.
   static Future replaceWith({
     required BuildContext context,
-    required StatefulWidget target,
+    required Widget target,
   }) async => Navigator.of(context).pushReplacement(
     MaterialPageRoute(builder: (targetContext) => target),
   );
@@ -192,10 +206,10 @@ class LocalRouteNavigator {
   /// This function serve as a command to navigate to new page but all of the previous page that stacked together are terminated
   /// Parameters:
   /// * Context (Required): BuildContext required for Navigator function.
-  /// * Target (Required): Target is a StatefulWidget that intended as target of navigator.
+  /// * Target (Required): Target is a Widget that intended as target of navigator.
   static Future redirectTo({
     required BuildContext context,
-    required StatefulWidget target,
+    required Widget target,
   }) async => Navigator.of(context).pushAndRemoveUntil(
     MaterialPageRoute(builder: (targetContext) => target),
         (_) => false,
@@ -300,7 +314,7 @@ class LocalAPIsRequest {
     Map<String, dynamic>? bodyData,
     int? connectionTimeoutInSecond,
     int? receiveTimeoutInSecond,
-    CancelToken? cancelToken,
+    CancellationToken? cancellationToken,
     Function(DioException, StackTrace)? errorHandler,
     BuildContext? usingloadingDialog,
   }) async {
@@ -323,6 +337,7 @@ class LocalAPIsRequest {
     if(usingloadingDialog != null) {
       LocalDialogFunction.loadingDialog(
         context: usingloadingDialog,
+        cancellationToken: cancellationToken,
       );
     }
 
@@ -332,20 +347,24 @@ class LocalAPIsRequest {
           apisURL,
           queryParameters: parameters,
           data: bodyData,
-          cancelToken: cancelToken,
+          cancelToken: cancellationToken,
         ).then((requestResult) {
           if(usingloadingDialog != null && usingloadingDialog.mounted) {
             LocalRouteNavigator.closeBack(
               context: usingloadingDialog,
+              callbackResult: "completed",
             );
           }
 
           result = requestResult;
         }).onError<DioException>((err, stackTrace) {
           if(usingloadingDialog != null && usingloadingDialog.mounted) {
-            LocalRouteNavigator.closeBack(
-              context: usingloadingDialog,
-            );
+            if(err.type != DioExceptionType.cancel) {
+              LocalRouteNavigator.closeBack(
+                context: usingloadingDialog,
+                callbackResult: "completed",
+              );
+            }
           }
 
           if(errorHandler != null) {
@@ -361,20 +380,24 @@ class LocalAPIsRequest {
           apisURL,
           queryParameters: parameters,
           data: bodyData,
-          cancelToken: cancelToken,
+          cancelToken: cancellationToken,
         ).then((requestResult) {
           if(usingloadingDialog != null && usingloadingDialog.mounted) {
             LocalRouteNavigator.closeBack(
               context: usingloadingDialog,
+              callbackResult: "completed",
             );
           }
 
           result = requestResult;
         }).onError<DioException>((err, stackTrace) {
           if(usingloadingDialog != null && usingloadingDialog.mounted) {
-            LocalRouteNavigator.closeBack(
-              context: usingloadingDialog,
-            );
+            if(err.type != DioExceptionType.cancel) {
+              LocalRouteNavigator.closeBack(
+                context: usingloadingDialog,
+                callbackResult: "completed",
+              );
+            }
           }
 
           if(errorHandler != null) {
@@ -390,20 +413,24 @@ class LocalAPIsRequest {
           apisURL,
           queryParameters: parameters,
           data: bodyData,
-          cancelToken: cancelToken,
+          cancelToken: cancellationToken,
         ).then((requestResult) {
           if(usingloadingDialog != null && usingloadingDialog.mounted) {
             LocalRouteNavigator.closeBack(
               context: usingloadingDialog,
+              callbackResult: "completed",
             );
           }
 
           result = requestResult;
         }).onError<DioException>((err, stackTrace) {
           if(usingloadingDialog != null && usingloadingDialog.mounted) {
-            LocalRouteNavigator.closeBack(
-              context: usingloadingDialog,
-            );
+            if(err.type != DioExceptionType.cancel) {
+              LocalRouteNavigator.closeBack(
+                context: usingloadingDialog,
+                callbackResult: "completed",
+              );
+            }
           }
 
           if(errorHandler != null) {
@@ -419,20 +446,24 @@ class LocalAPIsRequest {
           apisURL,
           queryParameters: parameters,
           data: bodyData,
-          cancelToken: cancelToken,
+          cancelToken: cancellationToken,
         ).then((requestResult) {
           if(usingloadingDialog != null && usingloadingDialog.mounted) {
             LocalRouteNavigator.closeBack(
               context: usingloadingDialog,
+              callbackResult: "completed",
             );
           }
 
           result = requestResult;
         }).onError<DioException>((err, stackTrace) {
           if(usingloadingDialog != null && usingloadingDialog.mounted) {
-            LocalRouteNavigator.closeBack(
-              context: usingloadingDialog,
-            );
+            if(err.type != DioExceptionType.cancel) {
+              LocalRouteNavigator.closeBack(
+                context: usingloadingDialog,
+                callbackResult: "completed",
+              );
+            }
           }
 
           if(errorHandler != null) {

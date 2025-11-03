@@ -33,7 +33,6 @@ class FirstPage extends StatefulWidget {
 }
 
 class _FirstPageState extends State<FirstPage> {
-
   @override
   void initState() {
     super.initState();
@@ -98,6 +97,8 @@ class _FirstPageState extends State<FirstPage> {
     required RequestType type,
     required String url,
   }) async {
+    CancellationToken cancellationToken = CancellationToken();
+
     await LocalAPIsRequest.submitRequest(
       requestType: type,
       apisURL: url,
@@ -107,6 +108,7 @@ class _FirstPageState extends State<FirstPage> {
           contentText: "Error when submitting request: $exception",
         );
       },
+      cancellationToken: cancellationToken,
       usingloadingDialog: context,
     ).then((result) {
       if(mounted) {
@@ -115,7 +117,7 @@ class _FirstPageState extends State<FirstPage> {
           List encodedListMap = [];
 
           if(result.data is Map) {
-             encodedMap = jsonEncode(result.data);
+            encodedMap = jsonEncode(result.data);
           } else if(result.data is List) {
             for(Map<String, dynamic> data in result.data) {
               encodedListMap.add(jsonEncode(data));
@@ -142,7 +144,7 @@ class _FirstPageState extends State<FirstPage> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: const Text(
-          "LCF Demo App 1st Page",
+          "LFC Demo App 1st Page",
         ),
       ),
       body: ListView(
@@ -398,7 +400,7 @@ class _SecondPageState extends State<SecondPage> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: const Text(
-          "LCF Demo App 2nd Page",
+          "LFC Demo App 2nd Page",
         ),
       ),
       body: ListView(
@@ -508,7 +510,7 @@ class _ThirdPageState extends State<ThirdPage> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: const Text(
-          "LCF Demo App 3rd Page",
+          "LFC Demo App 3rd Page",
         ),
       ),
       body: ListView(
