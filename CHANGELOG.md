@@ -16,3 +16,9 @@
 * LocalRouteNavigator now using "Widget" instead "StatefulWidget"
 * "CancelToken" now available without importing Dio separately. just call "CancellationToken" and you get "CancelToken"
 * Every critiques and advices will be received open handedly. You could reach me on Instagram: @raznovrnf or my LinkedIn: Razy Firdana. Thanks for all the support!
+
+## 0.0.4 - 2025-11-14
+
+* NEW UPDATE HAS BEEN DROPPED!!!
+* "usePreserveHeadercase" now available to use on LocalAPIsRequest submitRequest.
+* Every critiques and advices will be received open handedly. You could reach me on Instagram: @raznovrnf or my LinkedIn: Razy Firdana. Thanks for all the support!

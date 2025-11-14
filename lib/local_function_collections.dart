@@ -305,6 +305,7 @@ class LocalAPIsRequest {
   /// * Body Data (Required): Map of data that will be carried when reaching APIs address.
   /// * Connection Timeout in Second (Optional): Timeout set in second, to determined how long request could try reach the APIs address before it's declared as timeout.
   /// * Receive Timeout in Second (Optional): Timeout set in second, to determined how long response could received before it's declared as timeout.
+  /// * Use Preserve Header Case (Optional): An option that used as parameter for determined if header need to be keep on sensitve case or not.
   /// * Cancel Token (Optional): If this request run at background and needs to handle cancellation, this parameter need to be declared.
   /// * Error Handler (Optional): Handling an error request and carried DioException and StackTrace result value. You could utilize this function to handle error.
   /// * Using Loading Dialog (Optional): Will show and handle a loading dialog from Local Dialog Function.
@@ -316,6 +317,7 @@ class LocalAPIsRequest {
     Map<String, dynamic>? bodyData,
     int? connectionTimeoutInSecond,
     int? receiveTimeoutInSecond,
+    bool? usePreserveHeadercase,
     CancellationToken? cancellationToken,
     Function(DioException, StackTrace)? errorHandler,
     BuildContext? usingloadingDialog,
@@ -326,6 +328,7 @@ class LocalAPIsRequest {
 
     dio.options = BaseOptions(
       headers: headerRequest,
+      preserveHeaderCase: usePreserveHeadercase,
       connectTimeout: Duration(
         seconds: connectionTimeoutInSecond ?? 30,
       ),
