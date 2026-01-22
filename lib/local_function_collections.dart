@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -5,6 +7,31 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 enum RequestType { get, post, put, delete }
 
 class CancellationToken extends CancelToken {}
+
+class Forms extends FormData {
+  final FormData? form;
+
+  Forms({
+    this.form,
+  });
+}
+
+class UploadFile {
+  /// Name of your file parameter, the default value is 'files'.
+  final String fileParameterName;
+  /// List of file that you want to upload.
+  final List<File> files;
+  /// If your file parameter written
+  /// "file&#91;0&#93;"
+  /// set to true.
+  final bool isArrayKeyMethod;
+
+  const UploadFile({
+    required this.files,
+    this.fileParameterName = "files",
+    this.isArrayKeyMethod = false,
+  });
+}
 
 class LocalDialogFunction {
   /// OK Dialog
@@ -309,6 +336,7 @@ class LocalAPIsRequest {
   /// * Cancel Token (Optional): If this request run at background and needs to handle cancellation, this parameter need to be declared.
   /// * Error Handler (Optional): Handling an error request and carried DioException and StackTrace result value. You could utilize this function to handle error.
   /// * Using Loading Dialog (Optional): Will show and handle a loading dialog from Local Dialog Function.
+  /// * Upload File (Optional): An option that used when you want to upload a file, this parameter will using UploadFile class.
   static Future<Response?> submitRequest({
     required RequestType requestType,
     required String apisURL,
@@ -321,6 +349,7 @@ class LocalAPIsRequest {
     CancellationToken? cancellationToken,
     Function(DioException, StackTrace)? errorHandler,
     BuildContext? usingloadingDialog,
+    UploadFile? files,
   }) async {
     Response? result;
 
@@ -381,11 +410,47 @@ class LocalAPIsRequest {
         });
         break;
       case RequestType.post:
+        FormData? formData;
+
+        if((files?.files ?? []).isNotEmpty) {
+          if(files?.isArrayKeyMethod == true) {
+            Map<String, dynamic> tempBodyData = {};
+
+            tempBodyData = bodyData ?? {};
+            tempBodyData.addEntries(
+              files?.files.asMap().entries.map((entry) => MapEntry(
+                "files[${entry.key}]",
+                entry.value,
+              )) ?? [],
+            );
+
+            formData = FormData.fromMap(tempBodyData);
+          } else {
+            formData = FormData();
+
+            formData.fields.addAll(
+              bodyData?.entries.map((entry) => MapEntry(
+                entry.key,
+                entry.value,
+              )) ?? [],
+            );
+
+            formData.files.addAll(
+              files?.files.map((file) => MapEntry(
+                "files",
+                MultipartFile.fromFileSync(
+                  file.path,
+                ),
+              )) ?? [],
+            );
+          }
+        }
+
         await dio
             .post(
           apisURL,
           queryParameters: parameters,
-          data: bodyData,
+          data: formData ?? bodyData,
           cancelToken: cancellationToken,
         )
             .then((requestResult) {
