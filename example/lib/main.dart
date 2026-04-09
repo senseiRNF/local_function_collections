@@ -102,7 +102,7 @@ class _FirstPageState extends State<FirstPage> {
     required String url,
     List<File> files = const [],
   }) async {
-    CancellationToken cancellationToken = CancellationToken();
+    CancelToken cancelToken = CancelToken();
 
     await LocalAPIsRequest.submitRequest(
       requestType: type,
@@ -113,7 +113,7 @@ class _FirstPageState extends State<FirstPage> {
           contentText: "Error when submitting request: $exception",
         );
       },
-      cancellationToken: cancellationToken,
+      cancelToken: cancelToken,
       usingloadingDialog: context,
       bodyData: {
         "test": "test_upload",

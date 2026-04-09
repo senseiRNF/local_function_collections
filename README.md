@@ -74,13 +74,15 @@ class _FirstPageState extends State<FirstPage> {
     onAccept: () => LocalDialogFunction.okDialog(
       context: context,
       title: "Thank You!!!",
-      contentText: "Thank you for appreciating our package!, soon there will be another new package launched.",
+      contentText:
+      "Thank you for appreciating our package!, soon there will be another new package launched.",
       contentAlign: TextAlign.justify,
     ),
     onDecline: () => LocalDialogFunction.okDialog(
       context: context,
       title: "We're Sorry",
-      contentText: "We're sorry if our package isn't enough for you :(, for any critiques you can DM me on Instagram: @raznovrnf or my LinkedIn: Razy Firdana.",
+      contentText:
+      "We're sorry if our package isn't enough for you :(, for any critiques you can DM me on Instagram: @raznovrnf or my LinkedIn: Razy Firdana.",
       contentAlign: TextAlign.justify,
     ),
     contentAlign: TextAlign.justify,
@@ -94,7 +96,7 @@ class _FirstPageState extends State<FirstPage> {
     );
 
     Future.delayed(const Duration(seconds: 3), () {
-      if(mounted) {
+      if (mounted) {
         LocalRouteNavigator.closeBack(context: context);
       }
     });
@@ -120,8 +122,9 @@ class _FirstPageState extends State<FirstPage> {
   onSubmitRequestPressed({
     required RequestType type,
     required String url,
+    List<File> files = const [],
   }) async {
-    CancellationToken cancellationToken = CancellationToken();
+    CancelToken cancelToken = CancelToken();
 
     await LocalAPIsRequest.submitRequest(
       requestType: type,
@@ -132,18 +135,25 @@ class _FirstPageState extends State<FirstPage> {
           contentText: "Error when submitting request: $exception",
         );
       },
-      cancellationToken: cancellationToken,
+      cancelToken: cancelToken,
       usingloadingDialog: context,
+      bodyData: {
+        "test": "test_upload",
+      },
+      files: UploadFile(
+        files: files,
+        isArrayKeyMethod: true,
+      ),
     ).then((result) {
-      if(mounted) {
-        if(result != null) {
+      if (mounted) {
+        if (result != null) {
           String? encodedMap;
           List encodedListMap = [];
 
-          if(result.data is Map) {
+          if (result.data is Map) {
             encodedMap = jsonEncode(result.data);
-          } else if(result.data is List) {
-            for(Map<String, dynamic> data in result.data) {
+          } else if (result.data is List) {
+            for (Map<String, dynamic> data in result.data) {
               encodedListMap.add(jsonEncode(data));
             }
           }
@@ -151,13 +161,149 @@ class _FirstPageState extends State<FirstPage> {
           LocalDialogFunction.okDialog(
             context: context,
             title: "Status Code ${result.statusCode}",
-            contentText:
-            encodedListMap.isNotEmpty
-                ? encodedListMap.first :
-            encodedMap
-                ?? "",
+            contentText: encodedListMap.isNotEmpty
+                ? encodedListMap.first
+                : encodedMap ?? "",
           );
         }
+      }
+    });
+  }
+
+  onPickFilePressed() {
+    List<File> pickedFile = [];
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(10.0),
+          topRight: Radius.circular(10.0),
+        ),
+      ),
+      builder: (mbsBuilder) {
+        return StatefulBuilder(
+            builder: (mbsContext, mbsSetState) {
+
+              Future onPickeFile() async {
+                await FilePicker.platform.pickFiles(
+                  allowMultiple: true,
+                  type: FileType.custom,
+                  allowedExtensions: ["jpg", "jpeg", "png"],
+                ).then((result) {
+                  if(result != null) {
+                    if(result.files.length <= 5
+                        && (pickedFile.length + result.files.length) <= 5) {
+                      if(result.files.isNotEmpty) {
+                        mbsSetState(() {
+                          pickedFile.addAll(
+                            result.files
+                                .map((file) => File(file.path ?? ""))
+                                .toList(),
+                          );
+                        });
+                      } else {
+                        mbsSetState(() {
+                          pickedFile = result.files
+                              .map((file) => File(file.path ?? ""))
+                              .toList();
+                        });
+                      }
+                    } else if(mounted) {
+                      LocalDialogFunction.okDialog(
+                        context: context,
+                        contentText: "You can't pick more than 5 files",
+                      );
+                    }
+                  }
+                });
+              }
+
+              return SafeArea(
+                child: ListView(
+                  shrinkWrap: true,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10.0,
+                  ),
+                  children: [
+                    Text(
+                      "Picked File (${pickedFile.length} Item)",
+                    ),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 10.0,
+                      ),
+                      itemCount: pickedFile.length,
+                      itemBuilder: (itemBuilderContext, index) {
+                        return ListTile(
+                          leading: Image.file(
+                            pickedFile[index],
+                            fit: BoxFit.cover,
+                          ),
+                          title: Text(
+                            pickedFile[index].path.split("/").last,
+                          ),
+                          trailing: IconButton(
+                            onPressed: () {
+                              setState(() {
+                                pickedFile.removeAt(index);
+                              });
+                            },
+                            icon: const Icon(
+                              Icons.delete,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    ElevatedButton(
+                      onPressed: onPickeFile,
+                      child: const Padding(
+                        padding: EdgeInsets.all(5.0),
+                        child: Text(
+                          "Pick File (Max 5 Item)",
+                        ),
+                      ),
+                    ),
+                    pickedFile.isNotEmpty ?
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        top: 5.0,
+                      ),
+                      child: ElevatedButton(
+                        onPressed: () => LocalRouteNavigator.closeBack(
+                          context: context,
+                          callbackResult: true,
+                        ),
+                        child: const Padding(
+                          padding: EdgeInsets.all(5.0),
+                          child: Text(
+                            "POST",
+                          ),
+                        ),
+                      ),
+                    ) :
+                    const Material(),
+                    const SizedBox(
+                      height: 20.0,
+                    ),
+                  ],
+                ),
+              );
+            }
+        );
+      },
+    ).then((mbsResult) {
+      if(mbsResult is bool && mbsResult == true) {
+        onSubmitRequestPressed(
+          type: RequestType.post,
+          url: "https://dummyjson.com/test",
+          files: pickedFile,
+        );
       }
     });
   }
@@ -368,6 +514,21 @@ class _FirstPageState extends State<FirstPage> {
                   ),
                 ],
               ),
+              const SizedBox(
+                height: 5.0,
+              ),
+              ElevatedButton(
+                onPressed: onPickFilePressed,
+                child: const Padding(
+                  padding: EdgeInsets.all(5.0),
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      "POST WITH FILE",
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
         ],
@@ -526,7 +687,8 @@ class _ThirdPageState extends State<ThirdPage> {
     target: const FirstPage(),
   );
 
-  onClearSecureStorage() async => await LocalSecureStorage.clearKey().then((_) => onCheckSecureStorage());
+  onClearSecureStorage() async =>
+      await LocalSecureStorage.clearKey().then((_) => onCheckSecureStorage());
 
   @override
   Widget build(BuildContext context) {
@@ -584,9 +746,9 @@ class _ThirdPageState extends State<ThirdPage> {
               const SizedBox(
                 height: 5.0,
               ),
-              widget.isJumped == true ?
-              const Material() :
-              ElevatedButton(
+              widget.isJumped == true
+                  ? const Material()
+                  : ElevatedButton(
                 onPressed: () => onRedirectThisPage(),
                 child: const Padding(
                   padding: EdgeInsets.all(5.0),
