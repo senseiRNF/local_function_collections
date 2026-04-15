@@ -409,7 +409,7 @@ class LocalAPIsRequest {
             tempBodyData = bodyData ?? {};
             tempBodyData.addEntries(
               files?.files.asMap().entries.map((entry) => MapEntry(
-                "files[${entry.key}]",
+                "${files.fileParameterName}[${entry.key}]",
                 entry.value,
               )) ?? [],
             );
@@ -427,7 +427,7 @@ class LocalAPIsRequest {
 
             formData.files.addAll(
               files?.files.map((file) => MapEntry(
-                "files",
+                files.fileParameterName,
                 MultipartFile.fromFileSync(
                   file.path,
                 ),
