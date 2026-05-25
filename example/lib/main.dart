@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -35,36 +34,35 @@ class FirstPage extends StatefulWidget {
 }
 
 class _FirstPageState extends State<FirstPage> {
+
   @override
   void initState() {
     super.initState();
   }
 
   onOKDialogPressed() => LocalDialogFunction.okDialog(
-        context: context,
-        contentText: "Hello Users!!!",
-        contentAlign: TextAlign.justify,
-      );
+    context: context,
+    contentText: "Hello Users!!!",
+    contentAlign: TextAlign.justify,
+  );
 
   onOptionDialogPressed() => LocalDialogFunction.optionDialog(
-        context: context,
-        contentText: "Do you like this package?",
-        onAccept: () => LocalDialogFunction.okDialog(
-          context: context,
-          title: "Thank You!!!",
-          contentText:
-              "Thank you for appreciating our package!, soon there will be another new package launched.",
-          contentAlign: TextAlign.justify,
-        ),
-        onDecline: () => LocalDialogFunction.okDialog(
-          context: context,
-          title: "We're Sorry",
-          contentText:
-              "We're sorry if our package isn't enough for you :(, for any critiques you can DM me on Instagram: @raznovrnf or my LinkedIn: Razy Firdana.",
-          contentAlign: TextAlign.justify,
-        ),
-        contentAlign: TextAlign.justify,
-      );
+    context: context,
+    contentText: "Do you like this package?",
+    onAccept: () => LocalDialogFunction.okDialog(
+      context: context,
+      title: "Thank You!!!",
+      contentText: "Thank you for appreciating our package!, soon there will be another new package launched.",
+      contentAlign: TextAlign.justify,
+    ),
+    onDecline: () => LocalDialogFunction.okDialog(
+      context: context,
+      title: "We're Sorry",
+      contentText: "We're sorry if our package isn't enough for you :(, for any critiques you can DM me on Instagram: @raznovrnf or my LinkedIn: Razy Firdana.",
+      contentAlign: TextAlign.justify,
+    ),
+    contentAlign: TextAlign.justify,
+  );
 
   onLoadingDialogPressed() {
     LocalDialogFunction.loadingDialog(
@@ -81,30 +79,30 @@ class _FirstPageState extends State<FirstPage> {
   }
 
   onMoveTo2ndPage() => LocalRouteNavigator.moveTo(
-        context: context,
-        target: const SecondPage(),
-      );
+    context: context,
+    target: const SecondPage(),
+  );
 
   onMoveTo3rdPage() => LocalRouteNavigator.moveTo(
-        context: context,
-        target: const ThirdPage(
-          isJumped: true,
-        ),
-      );
+    context: context,
+    target: const ThirdPage(
+      isJumped: true,
+    ),
+  );
 
   onUpdateSecureStorage() async => await LocalSecureStorage.writeKey(
-        key: "example",
-        data: "This example was created at ${DateTime.now()}",
-      );
+    key: "example",
+    data: "This example was created at ${DateTime.now()}",
+  );
 
-  onSubmitRequestPressed({
+  void onSubmitRequestPressed({
     required RequestType type,
     required String url,
     List<File> files = const [],
   }) async {
     CancelToken cancelToken = CancelToken();
 
-    await LocalAPIsRequest.submitRequest(
+    Response? result = await LocalAPIsRequest.submitRequest(
       requestType: type,
       apisURL: url,
       errorHandler: (exception, stackTrace) {
@@ -122,36 +120,36 @@ class _FirstPageState extends State<FirstPage> {
         files: files,
         isArrayKeyMethod: true,
       ),
-    ).then((result) {
-      if (mounted) {
-        if (result != null) {
-          String? encodedMap;
-          List encodedListMap = [];
+    );
 
-          if (result.data is Map) {
-            encodedMap = jsonEncode(result.data);
-          } else if (result.data is List) {
-            for (Map<String, dynamic> data in result.data) {
-              encodedListMap.add(jsonEncode(data));
-            }
-          }
+    if (!mounted) return;
 
-          LocalDialogFunction.okDialog(
-            context: context,
-            title: "Status Code ${result.statusCode}",
-            contentText: encodedListMap.isNotEmpty
-                ? encodedListMap.first
-                : encodedMap ?? "",
-          );
+    if (result != null) {
+      String? encodedMap;
+      List encodedListMap = [];
+
+      if (result.data is Map) {
+        encodedMap = jsonEncode(result.data);
+      } else if (result.data is List) {
+        for (Map<String, dynamic> data in result.data) {
+          encodedListMap.add(jsonEncode(data));
         }
       }
-    });
+
+      LocalDialogFunction.okDialog(
+        context: context,
+        title: "Status Code ${result.statusCode}",
+        contentText: encodedListMap.isNotEmpty
+            ? encodedListMap.first
+            : encodedMap ?? "",
+      );
+    }
   }
 
-  onPickFilePressed() {
+  onPickFilePressed() async {
     List<File> pickedFile = [];
 
-    showModalBottomSheet(
+    bool? mbsResult = await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       showDragHandle: true,
@@ -166,37 +164,37 @@ class _FirstPageState extends State<FirstPage> {
           builder: (mbsContext, mbsSetState) {
 
             Future onPickeFile() async {
-              await FilePicker.platform.pickFiles(
+              FilePickerResult? result = await FilePicker.platform.pickFiles(
                 allowMultiple: true,
                 type: FileType.custom,
                 allowedExtensions: ["jpg", "jpeg", "png"],
-              ).then((result) {
-                if(result != null) {
-                  if(result.files.length <= 5
-                      && (pickedFile.length + result.files.length) <= 5) {
-                    if(result.files.isNotEmpty) {
-                      mbsSetState(() {
-                        pickedFile.addAll(
-                          result.files
-                              .map((file) => File(file.path ?? ""))
-                              .toList(),
-                        );
-                      });
-                    } else {
-                      mbsSetState(() {
-                        pickedFile = result.files
-                            .map((file) => File(file.path ?? ""))
-                            .toList();
-                      });
-                    }
-                  } else if(mounted) {
-                    LocalDialogFunction.okDialog(
-                      context: context,
-                      contentText: "You can't pick more than 5 files",
+              );
+
+              if(result == null) return;
+
+              if(result.files.length <= 5
+                  && (pickedFile.length + result.files.length) <= 5) {
+                if(result.files.isNotEmpty) {
+                  mbsSetState(() {
+                    pickedFile.addAll(
+                      result.files
+                          .map((file) => File(file.path ?? ""))
+                          .toList(),
                     );
-                  }
+                  });
+                } else {
+                  mbsSetState(() {
+                    pickedFile = result.files
+                        .map((file) => File(file.path ?? ""))
+                        .toList();
+                  });
                 }
-              });
+              } else if(mounted) {
+                LocalDialogFunction.okDialog(
+                  context: context,
+                  contentText: "You can't pick more than 5 files",
+                );
+              }
             }
 
             return SafeArea(
@@ -227,7 +225,9 @@ class _FirstPageState extends State<FirstPage> {
                         ),
                         trailing: IconButton(
                           onPressed: () {
-                            setState(() {
+                            if(!mounted) return;
+
+                            mbsSetState(() {
                               pickedFile.removeAt(index);
                             });
                           },
@@ -275,15 +275,17 @@ class _FirstPageState extends State<FirstPage> {
           }
         );
       },
-    ).then((mbsResult) {
-      if(mbsResult is bool && mbsResult == true) {
-        onSubmitRequestPressed(
-          type: RequestType.post,
-          url: "https://dummyjson.com/test",
-          files: pickedFile,
-        );
-      }
-    });
+    );
+
+    if(mbsResult == null) return;
+
+    if(mbsResult == true) {
+      onSubmitRequestPressed(
+        type: RequestType.post,
+        url: "https://dummyjson.com/test",
+        files: pickedFile,
+      );
+    }
   }
 
   @override
@@ -533,10 +535,12 @@ class _SecondPageState extends State<SecondPage> {
   }
 
   onCheckSecureStorage() async {
-    await LocalSecureStorage.readKey(key: "example").then((result) {
-      setState(() {
-        storageResult = result;
-      });
+    String? result = await LocalSecureStorage.readKey(key: "example");
+
+    if(!mounted) return;
+
+    setState(() {
+      storageResult = result;
     });
   }
 
@@ -651,10 +655,12 @@ class _ThirdPageState extends State<ThirdPage> {
   }
 
   onCheckSecureStorage() async {
-    await LocalSecureStorage.readKey(key: "example").then((result) {
-      setState(() {
-        storageResult = result;
-      });
+    String? result = await LocalSecureStorage.readKey(key: "example");
+
+    if(!mounted) return;
+
+    setState(() {
+      storageResult = result;
     });
   }
 
@@ -665,8 +671,15 @@ class _ThirdPageState extends State<ThirdPage> {
         target: const FirstPage(),
       );
 
-  onClearSecureStorage() async =>
-      await LocalSecureStorage.clearKey().then((_) => onCheckSecureStorage());
+  onClearSecureStorage() async {
+    try {
+      await LocalSecureStorage.clearKey();
+
+      onCheckSecureStorage();
+    } catch(e) {
+      debugPrint("ERR: $e");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

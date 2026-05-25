@@ -1,3 +1,17 @@
+## 0.0.7 - 2026-05-25
+
+* NEW UPDATE HAS BEEN DROPPED!!!
+* Refactoring code and optimize import package, making you project compiled faster
+* Every critique and advices will be received open handedly. You could reach me on Instagram: @raznovrnf or my LinkedIn: Razy Firdana. Thanks for all the support!
+* Thanks for all the support!
+
+## 0.0.6 - 2026-04-09
+
+* NEW UPDATE HAS BEEN DROPPED!!!
+* Now you could accesssing Dio without needed to import Dio to your project
+* Every critique and advices will be received open handedly. You could reach me on Instagram: @raznovrnf or my LinkedIn: Razy Firdana. Thanks for all the support!
+* Thanks for all the support!
+
 ## 0.0.6 - 2026-04-09
 
 * NEW UPDATE HAS BEEN DROPPED!!!

@@ -40,27 +40,32 @@ class LocalDialogFunction {
     required String contentText,
     Function? onClose,
     TextAlign? contentAlign,
-  }) async =>
-      showDialog(
-        context: context,
-        builder: (dialogContext) {
-          return AlertDialog(
-            title: title != null ? Text(title) : null,
-            content: Text(
-              contentText,
-              textAlign: contentAlign ?? TextAlign.start,
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text(
-                  "OK",
-                ),
+  }) async {
+    await showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: title != null ? Text(title) : null,
+          content: Text(
+            contentText,
+            textAlign: contentAlign ?? TextAlign.start,
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text(
+                "OK",
               ),
-            ],
-          );
-        },
-      ).then((_) => onClose != null ? onClose() : {});
+            ),
+          ],
+        );
+      },
+    );
+
+    if(onClose == null) return;
+
+    onClose();
+  }
 
   /// Option Dialog
   ///
@@ -84,41 +89,42 @@ class LocalDialogFunction {
     Function? onDecline,
     required Function onAccept,
     TextAlign? contentAlign,
-  }) async =>
-      showDialog(
-        context: context,
-        builder: (dialogContext) {
-          return AlertDialog(
-            title: title != null ? Text(title) : null,
-            content: Text(
-              contentText,
-              textAlign: TextAlign.center,
+  }) async {
+    bool? result = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: title != null ? Text(title) : null,
+          content: Text(
+            contentText,
+            textAlign: contentAlign ?? TextAlign.center,
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text(
+                declineText ?? "No",
+              ),
             ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: Text(
-                  declineText ?? "No",
-                ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: Text(
+                acceptText ?? "Yes",
               ),
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(true),
-                child: Text(
-                  acceptText ?? "Yes",
-                ),
-              ),
-            ],
-          );
-        },
-      ).then((result) {
-        if (result != null && result == true) {
-          onAccept();
-        } else if (result != null && result == false) {
-          if (onDecline != null) {
-            onDecline();
-          }
-        }
-      });
+            ),
+          ],
+        );
+      },
+    );
+
+    if(result == null) return;
+
+    if (result == true) {
+      onAccept();
+    } else {
+      onDecline?.call();
+    }
+  }
 
   /// Loading Dialog
   ///
@@ -133,49 +139,50 @@ class LocalDialogFunction {
     String? contentText,
     TextAlign? contentAlign,
     CancelToken? cancellationToken,
-  }) async =>
-      showDialog(
-        context: context,
-        barrierDismissible: cancellationToken != null ? true : false,
-        builder: (dialogBuilder) {
-          return PopScope(
-            canPop: cancellationToken != null ? true : false,
-            onPopInvokedWithResult: (didPop, result) {
-              if (didPop == true && result != "completed") {
-                if (cancellationToken != null) {
-                  cancellationToken.cancel();
-                }
+  }) async {
+    await showDialog(
+      context: context,
+      barrierDismissible: cancellationToken != null ? true : false,
+      builder: (dialogBuilder) {
+        return PopScope(
+          canPop: cancellationToken != null ? true : false,
+          onPopInvokedWithResult: (didPop, result) {
+            if (didPop == true && result != "completed") {
+              if (cancellationToken != null) {
+                cancellationToken.cancel();
               }
-            },
-            child: AlertDialog(
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text(
-                    contentText ?? "Loading data, please wait...",
-                    textAlign: contentAlign ?? TextAlign.start,
+            }
+          },
+          child: AlertDialog(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  contentText ?? "Loading data, please wait...",
+                  textAlign: contentAlign ?? TextAlign.start,
+                ),
+                const SizedBox(
+                  height: 10.0,
+                ),
+                const Padding(
+                  padding: EdgeInsets.symmetric(
+                    vertical: 20.0,
                   ),
-                  const SizedBox(
-                    height: 10.0,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircularProgressIndicator(),
+                    ],
                   ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(
-                      vertical: 20.0,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        CircularProgressIndicator(),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-          );
-        },
-      );
+          ),
+        );
+      },
+    );
+  }
 }
 
 class LocalRouteNavigator {
@@ -190,13 +197,17 @@ class LocalRouteNavigator {
     required BuildContext context,
     required Widget target,
     Function? callbackFunction,
-  }) async =>
-      Navigator.of(context)
-          .push(MaterialPageRoute(
+  }) async {
+    dynamic callbackResult = await Navigator.of(context).push(
+      MaterialPageRoute(
         builder: (targetContext) => target,
-      ))
-          .then((callbackResult) =>
-      callbackFunction != null ? callbackFunction(callbackResult) : {});
+      ),
+    );
+
+    if(callbackFunction == null) return;
+
+    callbackFunction(callbackResult);
+  }
 
   /// Replace With
   ///
@@ -204,13 +215,14 @@ class LocalRouteNavigator {
   /// Parameters:
   /// * Context (Required): BuildContext required for Navigator function.
   /// * Target (Required): Target is a Widget that intended as target of navigator.
-  static Future replaceWith({
+  static void replaceWith({
     required BuildContext context,
     required Widget target,
-  }) async =>
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (targetContext) => target),
-      );
+  }) {
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (targetContext) => target),
+    );
+  }
 
   /// Redirect To
   ///
@@ -218,14 +230,15 @@ class LocalRouteNavigator {
   /// Parameters:
   /// * Context (Required): BuildContext required for Navigator function.
   /// * Target (Required): Target is a Widget that intended as target of navigator.
-  static Future redirectTo({
+  static void redirectTo({
     required BuildContext context,
     required Widget target,
-  }) async =>
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (targetContext) => target),
-            (_) => false,
-      );
+  }) {
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (targetContext) => target),
+          (_) => false,
+    );
+  }
 
   /// Close Back
   ///
@@ -233,11 +246,12 @@ class LocalRouteNavigator {
   /// Parameters:
   /// * Context (Required): BuildContext required for Navigator function.
   /// * Callback Result (Optional): Callback result is a value that will be carried away after leaving current page.
-  static Future closeBack({
+  static void closeBack({
     required BuildContext context,
     dynamic callbackResult,
-  }) async =>
-      Navigator.of(context).pop(callbackResult);
+  }) {
+    Navigator.of(context).pop(callbackResult);
+  }
 }
 
 class LocalSecureStorage {
@@ -249,14 +263,16 @@ class LocalSecureStorage {
   static Future<bool> writeKey({required String key, String? data}) async {
     bool result = false;
 
-    await _secureStorage
-        .write(
-      key: key,
-      value: data,
-    )
-        .then((_) {
+    try {
+      await _secureStorage.write(
+        key: key,
+        value: data,
+      );
+
       result = true;
-    });
+    } catch(e) {
+      debugPrint("ERR: $e");
+    }
 
     return result;
   }
@@ -267,13 +283,13 @@ class LocalSecureStorage {
   static Future<String?> readKey({required String key}) async {
     String? result;
 
-    await _secureStorage
-        .read(
-      key: key,
-    )
-        .then((readResult) {
-      result = readResult;
-    });
+    try {
+      result = await _secureStorage.read(
+        key: key,
+      );
+    } catch(e) {
+      debugPrint("ERR: $e");
+    }
 
     return result;
   }
@@ -284,13 +300,15 @@ class LocalSecureStorage {
   static Future<bool> deleteKey({required String key}) async {
     bool result = false;
 
-    await _secureStorage
-        .delete(
-      key: key,
-    )
-        .then((_) {
+    try {
+      await _secureStorage.delete(
+        key: key,
+      );
+
       result = true;
-    });
+    } catch(e) {
+      debugPrint("ERR: $e");
+    }
 
     return result;
   }
@@ -301,15 +319,21 @@ class LocalSecureStorage {
   static Future<bool> clearKey() async {
     bool result = false;
 
-    await _secureStorage.deleteAll().then((_) {
+    try {
+      await _secureStorage.deleteAll();
+
       result = true;
-    });
+    } catch(e) {
+      debugPrint("ERR: $e");
+    }
 
     return result;
   }
 }
 
 class LocalAPIsRequest {
+  static final Dio _dio = Dio();
+
   /// Submit Request
   ///
   /// This function will handle a network request using Dio
@@ -341,11 +365,7 @@ class LocalAPIsRequest {
     BuildContext? usingloadingDialog,
     UploadFile? files,
   }) async {
-    Response? result;
-
-    Dio dio = Dio();
-
-    dio.options = BaseOptions(
+    _dio.options = BaseOptions(
       headers: headerRequest,
       preserveHeaderCase: usePreserveHeadercase,
       connectTimeout: Duration(
@@ -363,185 +383,103 @@ class LocalAPIsRequest {
       );
     }
 
-    switch (requestType) {
-      case RequestType.get:
-        await dio
-            .get(
-          apisURL,
-          queryParameters: parameters,
-          data: bodyData,
-          cancelToken: cancelToken,
-        )
-            .then((requestResult) {
-          if (usingloadingDialog != null && usingloadingDialog.mounted) {
-            LocalRouteNavigator.closeBack(
-              context: usingloadingDialog,
-              callbackResult: "completed",
-            );
-          }
+    try {
+      Response? response;
+      dynamic requestData = bodyData;
 
-          result = requestResult;
-        }).onError<DioException>((err, stackTrace) {
-          if (usingloadingDialog != null && usingloadingDialog.mounted) {
-            if (err.type != DioExceptionType.cancel) {
-              LocalRouteNavigator.closeBack(
-                context: usingloadingDialog,
-                callbackResult: "completed",
-              );
-            }
-          }
+      if (requestType == RequestType.post && files != null && files.files.isNotEmpty) {
+        requestData = _buildFormData(files, bodyData);
+      }
 
-          if (errorHandler != null) {
-            errorHandler(
-              err,
-              stackTrace,
-            );
-          }
-        });
-        break;
-      case RequestType.post:
-        FormData? formData;
+      switch (requestType) {
+        case RequestType.get:
+          response = await _dio.get(
+            apisURL,
+            queryParameters: parameters,
+            data: bodyData,
+            cancelToken: cancelToken,
+          );
+          break;
+        case RequestType.post:
+          response = await _dio.post(
+            apisURL,
+            queryParameters: parameters,
+            data: requestData,
+            cancelToken: cancelToken,
+          );
+          break;
+        case RequestType.put:
+          response = await _dio.put(
+            apisURL,
+            queryParameters: parameters,
+            data: bodyData,
+            cancelToken: cancelToken,
+          );
+          break;
+        case RequestType.delete:
+          response = await _dio.delete(
+            apisURL,
+            queryParameters: parameters,
+            data: bodyData,
+            cancelToken: cancelToken,
+          );
+          break;
+      }
 
-        if((files?.files ?? []).isNotEmpty) {
-          if(files?.isArrayKeyMethod == true) {
-            Map<String, dynamic> tempBodyData = {};
+      if(usingloadingDialog != null && usingloadingDialog.mounted) {
+        _dismissLoadingDialog(usingloadingDialog);
+      }
 
-            tempBodyData = bodyData ?? {};
-            tempBodyData.addEntries(
-              files?.files.asMap().entries.map((entry) => MapEntry(
-                "${files.fileParameterName}[${entry.key}]",
-                entry.value,
-              )) ?? [],
-            );
-
-            formData = FormData.fromMap(tempBodyData);
-          } else {
-            formData = FormData();
-
-            formData.fields.addAll(
-              bodyData?.entries.map((entry) => MapEntry(
-                entry.key,
-                entry.value,
-              )) ?? [],
-            );
-
-            formData.files.addAll(
-              files?.files.map((file) => MapEntry(
-                files.fileParameterName,
-                MultipartFile.fromFileSync(
-                  file.path,
-                ),
-              )) ?? [],
-            );
-          }
+      return response;
+    } on DioException catch(err, stackTrace) {
+      if (err.type != DioExceptionType.cancel) {
+        if(usingloadingDialog != null && usingloadingDialog.mounted) {
+          _dismissLoadingDialog(usingloadingDialog);
         }
+      }
 
-        await dio
-            .post(
-          apisURL,
-          queryParameters: parameters,
-          data: formData ?? bodyData,
-          cancelToken: cancelToken,
-        )
-            .then((requestResult) {
-          if (usingloadingDialog != null && usingloadingDialog.mounted) {
-            LocalRouteNavigator.closeBack(
-              context: usingloadingDialog,
-              callbackResult: "completed",
-            );
-          }
+      if (errorHandler != null) {
+        errorHandler(err, stackTrace);
+      }
 
-          result = requestResult;
-        }).onError<DioException>((err, stackTrace) {
-          if (usingloadingDialog != null && usingloadingDialog.mounted) {
-            if (err.type != DioExceptionType.cancel) {
-              LocalRouteNavigator.closeBack(
-                context: usingloadingDialog,
-                callbackResult: "completed",
-              );
-            }
-          }
+      return err.response;
+    } catch(e) {
+      if(usingloadingDialog != null && usingloadingDialog.mounted) {
+        _dismissLoadingDialog(usingloadingDialog);
+      }
 
-          if (errorHandler != null) {
-            errorHandler(
-              err,
-              stackTrace,
-            );
-          }
-        });
-        break;
-      case RequestType.put:
-        await dio
-            .put(
-          apisURL,
-          queryParameters: parameters,
-          data: bodyData,
-          cancelToken: cancelToken,
-        )
-            .then((requestResult) {
-          if (usingloadingDialog != null && usingloadingDialog.mounted) {
-            LocalRouteNavigator.closeBack(
-              context: usingloadingDialog,
-              callbackResult: "completed",
-            );
-          }
-
-          result = requestResult;
-        }).onError<DioException>((err, stackTrace) {
-          if (usingloadingDialog != null && usingloadingDialog.mounted) {
-            if (err.type != DioExceptionType.cancel) {
-              LocalRouteNavigator.closeBack(
-                context: usingloadingDialog,
-                callbackResult: "completed",
-              );
-            }
-          }
-
-          if (errorHandler != null) {
-            errorHandler(
-              err,
-              stackTrace,
-            );
-          }
-        });
-        break;
-      case RequestType.delete:
-        await dio
-            .delete(
-          apisURL,
-          queryParameters: parameters,
-          data: bodyData,
-          cancelToken: cancelToken,
-        )
-            .then((requestResult) {
-          if (usingloadingDialog != null && usingloadingDialog.mounted) {
-            LocalRouteNavigator.closeBack(
-              context: usingloadingDialog,
-              callbackResult: "completed",
-            );
-          }
-
-          result = requestResult;
-        }).onError<DioException>((err, stackTrace) {
-          if (usingloadingDialog != null && usingloadingDialog.mounted) {
-            if (err.type != DioExceptionType.cancel) {
-              LocalRouteNavigator.closeBack(
-                context: usingloadingDialog,
-                callbackResult: "completed",
-              );
-            }
-          }
-
-          if (errorHandler != null) {
-            errorHandler(
-              err,
-              stackTrace,
-            );
-          }
-        });
-        break;
+      rethrow;
     }
+  }
 
-    return result;
+  static FormData _buildFormData(UploadFile files, Map<String, dynamic>? bodyData) {
+    if (files.isArrayKeyMethod) {
+      final tempBodyData = Map<String, dynamic>.from(bodyData ?? {});
+      tempBodyData.addEntries(
+        files.files.asMap().entries.map(
+              (entry) => MapEntry("${files.fileParameterName}[${entry.key}]", MultipartFile.fromFileSync(entry.value.path)),
+        ),
+      );
+      return FormData.fromMap(tempBodyData);
+    } else {
+      final formData = FormData();
+      if (bodyData != null) {
+        formData.fields.addAll(bodyData.entries.map((e) => MapEntry(e.key, e.value.toString())));
+      }
+      formData.files.addAll(
+        files.files.map((file) => MapEntry(
+          files.fileParameterName,
+          MultipartFile.fromFileSync(file.path),
+        )),
+      );
+      return formData;
+    }
+  }
+
+  static void _dismissLoadingDialog(BuildContext context) {
+    LocalRouteNavigator.closeBack(
+      context: context,
+      callbackResult: "completed",
+    );
   }
 }

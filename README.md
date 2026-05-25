@@ -11,761 +11,179 @@ and the Flutter guide for
 [developing packages and plugins](https://flutter.dev/to/develop-packages).
 -->
 
-Local Function Collections is a simple package that provide navigation, alert dialog and secure storage function.
+# Local Function Collections
+
+[![pub package](https://img.shields.io/pub/v/local_function_collections.svg)](https://pub.dev/packages/local_function_collections)
+[![likes](https://img.shields.io/pub/likes/local_function_collections.svg)](https://pub.dev/packages/local_function_collections)
+[![Flutter Platform](https://img.shields.io/badge/platform-flutter-lightgrey.svg)](https://flutter.dev)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+A robust, production-ready helper utility package for Flutter that encapsulates standard workflows: advanced network requests, context-safe navigation, customized alert dialogs, and persistent encrypted secure storage.
+
+---
 
 ## Features
 
-There are several function that provided in this package:
+| Category           | Class                 | Description                                                                                                                                 |
+|:-------------------|:----------------------|:--------------------------------------------------------------------------------------------------------------------------------------------|
+| 🌐 **Networking**  | `LocalAPIsRequest`    | Unified HTTP client powered by Dio with dynamic loading states, automatic `FormData` construction for file uploads, and flexible callbacks. |
+| 🛡️ **Storage**    | `LocalSecureStorage`  | Simple keychain/keystore encapsulation for reading, writing, and wiping highly sensitive encrypted key-value string data.                   |
+| 💬 **Dialogs**     | `LocalDialogFunction` | Pre-built alert interfaces including context-safe blocking Loaders, standard OK Informational alerts, and dynamic Option Dialogs.           |
+| 🗺️ **Navigation** | `LocalRouteNavigator` | Simplified routing patterns including basic pushes, inline replacements, complete stack-resets, and parameterized pops.                     |
 
-1. Navigation Function like move to, replace with and back to previous page.
-2. Dialog Function like ok dialog, option dialog and loading dialog.
-3. Secure Storage Function like write, read, remove and clear.
-4. API Request Function with GET, POST, PUT, DELETE method using Dio Flutter
+---
 
-## Getting started
+## Getting Started
 
 Just make sure your flutter version is up to date.
 
+### Installation
+
+Add `local_function_collections` to your `pubspec.yaml` file:
+
 ## Usage
 
-Any further instruction has been added into example.dart
+You only need a single import statement to gain access to the entire utility pipeline:
 
 ```dart
-class LFCApp extends StatelessWidget {
-  const LFCApp({super.key});
+import 'package:local_function_collections/local_function_collections.dart';
+```
 
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'LFC Demo App',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.lightBlue,
-        ),
-        useMaterial3: true,
-      ),
-      home: const FirstPage(),
-    );
-  }
-}
+## 1. Network Request & Multi-File Upload (`LocalAPIsRequest`)
 
-class FirstPage extends StatefulWidget {
-  const FirstPage({super.key});
+Execute network protocols (GET, POST, PUT, DELETE) with an inline loading state and central error delegation seamlessly.
 
-  @override
-  State<FirstPage> createState() => _FirstPageState();
-}
+```dart
+void makeNetworkCall(BuildContext context) async {
+  final cancelToken = CancelToken();
 
-class _FirstPageState extends State<FirstPage> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  onOKDialogPressed() => LocalDialogFunction.okDialog(
-    context: context,
-    contentText: "Hello Users!!!",
-    contentAlign: TextAlign.justify,
-  );
-
-  onOptionDialogPressed() => LocalDialogFunction.optionDialog(
-    context: context,
-    contentText: "Do you like this package?",
-    onAccept: () => LocalDialogFunction.okDialog(
-      context: context,
-      title: "Thank You!!!",
-      contentText:
-      "Thank you for appreciating our package!, soon there will be another new package launched.",
-      contentAlign: TextAlign.justify,
+  Response? response = await LocalAPIsRequest.submitRequest(
+    requestType: RequestType.post,
+    apisURL: "[https://api.example.com/v1/upload](https://api.example.com/v1/upload)",
+    usingloadingDialog: context, // Automatically displays & dismisses loader dialog safely
+    cancelToken: cancelToken,
+    bodyData: {"category": "profile_pictures"},
+    files: UploadFile(
+      fileParameterName: "images",
+      files: [File("/path/to/image1.png"), File("/path/to/image2.png")],
+      isArrayKeyMethod: true, // Appends 'images[0]', 'images[1]' parameter structural keys
     ),
-    onDecline: () => LocalDialogFunction.okDialog(
-      context: context,
-      title: "We're Sorry",
-      contentText:
-      "We're sorry if our package isn't enough for you :(, for any critiques you can DM me on Instagram: @raznovrnf or my LinkedIn: Razy Firdana.",
-      contentAlign: TextAlign.justify,
-    ),
-    contentAlign: TextAlign.justify,
+    errorHandler: (exception, stackTrace) {
+      // Handles anomalies or non-200 Status Code responses safely inside the scope
+      print("Network Anomaly Caught: $exception");
+    },
   );
 
-  onLoadingDialogPressed() {
-    LocalDialogFunction.loadingDialog(
-      context: context,
-      contentText: "This loading will disappear in 3 second",
-      contentAlign: TextAlign.justify,
-    );
-
-    Future.delayed(const Duration(seconds: 3), () {
-      if (mounted) {
-        LocalRouteNavigator.closeBack(context: context);
-      }
-    });
-  }
-
-  onMoveTo2ndPage() => LocalRouteNavigator.moveTo(
-    context: context,
-    target: const SecondPage(),
-  );
-
-  onMoveTo3rdPage() => LocalRouteNavigator.moveTo(
-    context: context,
-    target: const ThirdPage(
-      isJumped: true,
-    ),
-  );
-
-  onUpdateSecureStorage() async => await LocalSecureStorage.writeKey(
-    key: "example",
-    data: "This example was created at ${DateTime.now()}",
-  );
-
-  onSubmitRequestPressed({
-    required RequestType type,
-    required String url,
-    List<File> files = const [],
-  }) async {
-    CancelToken cancelToken = CancelToken();
-
-    await LocalAPIsRequest.submitRequest(
-      requestType: type,
-      apisURL: url,
-      errorHandler: (exception, stackTrace) {
-        LocalDialogFunction.okDialog(
-          context: context,
-          contentText: "Error when submitting request: $exception",
-        );
-      },
-      cancelToken: cancelToken,
-      usingloadingDialog: context,
-      bodyData: {
-        "test": "test_upload",
-      },
-      files: UploadFile(
-        files: files,
-        isArrayKeyMethod: true,
-      ),
-    ).then((result) {
-      if (mounted) {
-        if (result != null) {
-          String? encodedMap;
-          List encodedListMap = [];
-
-          if (result.data is Map) {
-            encodedMap = jsonEncode(result.data);
-          } else if (result.data is List) {
-            for (Map<String, dynamic> data in result.data) {
-              encodedListMap.add(jsonEncode(data));
-            }
-          }
-
-          LocalDialogFunction.okDialog(
-            context: context,
-            title: "Status Code ${result.statusCode}",
-            contentText: encodedListMap.isNotEmpty
-                ? encodedListMap.first
-                : encodedMap ?? "",
-          );
-        }
-      }
-    });
-  }
-
-  onPickFilePressed() {
-    List<File> pickedFile = [];
-
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      showDragHandle: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(10.0),
-          topRight: Radius.circular(10.0),
-        ),
-      ),
-      builder: (mbsBuilder) {
-        return StatefulBuilder(
-            builder: (mbsContext, mbsSetState) {
-
-              Future onPickeFile() async {
-                await FilePicker.platform.pickFiles(
-                  allowMultiple: true,
-                  type: FileType.custom,
-                  allowedExtensions: ["jpg", "jpeg", "png"],
-                ).then((result) {
-                  if(result != null) {
-                    if(result.files.length <= 5
-                        && (pickedFile.length + result.files.length) <= 5) {
-                      if(result.files.isNotEmpty) {
-                        mbsSetState(() {
-                          pickedFile.addAll(
-                            result.files
-                                .map((file) => File(file.path ?? ""))
-                                .toList(),
-                          );
-                        });
-                      } else {
-                        mbsSetState(() {
-                          pickedFile = result.files
-                              .map((file) => File(file.path ?? ""))
-                              .toList();
-                        });
-                      }
-                    } else if(mounted) {
-                      LocalDialogFunction.okDialog(
-                        context: context,
-                        contentText: "You can't pick more than 5 files",
-                      );
-                    }
-                  }
-                });
-              }
-
-              return SafeArea(
-                child: ListView(
-                  shrinkWrap: true,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10.0,
-                  ),
-                  children: [
-                    Text(
-                      "Picked File (${pickedFile.length} Item)",
-                    ),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 10.0,
-                      ),
-                      itemCount: pickedFile.length,
-                      itemBuilder: (itemBuilderContext, index) {
-                        return ListTile(
-                          leading: Image.file(
-                            pickedFile[index],
-                            fit: BoxFit.cover,
-                          ),
-                          title: Text(
-                            pickedFile[index].path.split("/").last,
-                          ),
-                          trailing: IconButton(
-                            onPressed: () {
-                              setState(() {
-                                pickedFile.removeAt(index);
-                              });
-                            },
-                            icon: const Icon(
-                              Icons.delete,
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                    ElevatedButton(
-                      onPressed: onPickeFile,
-                      child: const Padding(
-                        padding: EdgeInsets.all(5.0),
-                        child: Text(
-                          "Pick File (Max 5 Item)",
-                        ),
-                      ),
-                    ),
-                    pickedFile.isNotEmpty ?
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        top: 5.0,
-                      ),
-                      child: ElevatedButton(
-                        onPressed: () => LocalRouteNavigator.closeBack(
-                          context: context,
-                          callbackResult: true,
-                        ),
-                        child: const Padding(
-                          padding: EdgeInsets.all(5.0),
-                          child: Text(
-                            "POST",
-                          ),
-                        ),
-                      ),
-                    ) :
-                    const Material(),
-                    const SizedBox(
-                      height: 20.0,
-                    ),
-                  ],
-                ),
-              );
-            }
-        );
-      },
-    ).then((mbsResult) {
-      if(mbsResult is bool && mbsResult == true) {
-        onSubmitRequestPressed(
-          type: RequestType.post,
-          url: "https://dummyjson.com/test",
-          files: pickedFile,
-        );
-      }
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text(
-          "LFC Demo App 1st Page",
-        ),
-      ),
-      body: ListView(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 10.0,
-        ),
-        children: [
-          SizedBox(
-            height: MediaQuery.of(context).size.height / 4,
-          ),
-          Column(
-            children: <Widget>[
-              const Text(
-                "Welcome on 1st Page,\nLet's try our Local Function Collections",
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(
-                height: 10.0,
-              ),
-              const Text(
-                "Dialog Collections",
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () => onOKDialogPressed(),
-                      child: const Padding(
-                        padding: EdgeInsets.all(5.0),
-                        child: Text(
-                          "OK",
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 10.0,
-                  ),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () => onOptionDialogPressed(),
-                      child: const Padding(
-                        padding: EdgeInsets.all(5.0),
-                        child: Text(
-                          "Option",
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 10.0,
-                  ),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () => onLoadingDialogPressed(),
-                      child: const Padding(
-                        padding: EdgeInsets.all(5.0),
-                        child: Text(
-                          "Loading",
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 5.0,
-              ),
-              const Text(
-                "Route Collections",
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () => onMoveTo2ndPage(),
-                      child: const Padding(
-                        padding: EdgeInsets.all(5.0),
-                        child: Text(
-                          "Go to 2nd Page",
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 10.0,
-                  ),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () => onMoveTo3rdPage(),
-                      child: const Padding(
-                        padding: EdgeInsets.all(5.0),
-                        child: Text(
-                          "Go to 3rd Page",
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 5.0,
-              ),
-              const Text(
-                "Secure Storage Collections",
-              ),
-              ElevatedButton(
-                onPressed: () => onUpdateSecureStorage(),
-                child: const Padding(
-                  padding: EdgeInsets.all(5.0),
-                  child: Text(
-                    "Update Secure Storage Timestamp",
-                  ),
-                ),
-              ),
-              const Text(
-                "APIs Request Collections",
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () => onSubmitRequestPressed(
-                        type: RequestType.get,
-                        url: "https://dummyjson.com/test",
-                      ),
-                      child: const Padding(
-                        padding: EdgeInsets.all(5.0),
-                        child: FittedBox(
-                          fit: BoxFit.scaleDown,
-                          child: Text(
-                            "GET",
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 10.0,
-                  ),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () => onSubmitRequestPressed(
-                        type: RequestType.post,
-                        url: "https://dummyjson.com/test",
-                      ),
-                      child: const Padding(
-                        padding: EdgeInsets.all(5.0),
-                        child: FittedBox(
-                          fit: BoxFit.scaleDown,
-                          child: Text(
-                            "POST",
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 10.0,
-                  ),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () => onSubmitRequestPressed(
-                        type: RequestType.put,
-                        url: "https://dummyjson.com/test",
-                      ),
-                      child: const Padding(
-                        padding: EdgeInsets.all(5.0),
-                        child: FittedBox(
-                          fit: BoxFit.scaleDown,
-                          child: Text(
-                            "PUT",
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 10.0,
-                  ),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () => onSubmitRequestPressed(
-                        type: RequestType.delete,
-                        url: "https://dummyjson.com/test",
-                      ),
-                      child: const Padding(
-                        padding: EdgeInsets.all(5.0),
-                        child: FittedBox(
-                          fit: BoxFit.scaleDown,
-                          child: Text(
-                            "DELETE",
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 5.0,
-              ),
-              ElevatedButton(
-                onPressed: onPickFilePressed,
-                child: const Padding(
-                  padding: EdgeInsets.all(5.0),
-                  child: FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: Text(
-                      "POST WITH FILE",
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class SecondPage extends StatefulWidget {
-  const SecondPage({super.key});
-
-  @override
-  State<SecondPage> createState() => _SecondPageState();
-}
-
-class _SecondPageState extends State<SecondPage> {
-  String? storageResult;
-
-  @override
-  void initState() {
-    super.initState();
-
-    onCheckSecureStorage();
-  }
-
-  onCheckSecureStorage() async {
-    await LocalSecureStorage.readKey(key: "example").then((result) {
-      setState(() {
-        storageResult = result;
-      });
-    });
-  }
-
-  onCloseThisPage() => LocalRouteNavigator.closeBack(context: context);
-
-  onReplaceTo3rdPage() => LocalRouteNavigator.replaceWith(
-    context: context,
-    target: const ThirdPage(
-      isJumped: true,
-    ),
-  );
-
-  onMoveTo3rdPage() => LocalRouteNavigator.moveTo(
-    context: context,
-    target: const ThirdPage(
-      isJumped: false,
-    ),
-    callbackFunction: (_) => onCheckSecureStorage(),
-  );
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text(
-          "LFC Demo App 2nd Page",
-        ),
-      ),
-      body: ListView(
-        children: [
-          SizedBox(
-            height: MediaQuery.of(context).size.height / 4,
-          ),
-          Column(
-            children: <Widget>[
-              const Text(
-                "Welcome on 2nd page...",
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(
-                height: 10.0,
-              ),
-              Text(
-                "Text Saved on Local Secure Storage: ${storageResult ?? "-"}",
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(
-                height: 10.0,
-              ),
-              ElevatedButton(
-                onPressed: () => onCloseThisPage(),
-                child: const Padding(
-                  padding: EdgeInsets.all(5.0),
-                  child: Text(
-                    "Back to 1st Page",
-                  ),
-                ),
-              ),
-              const SizedBox(
-                height: 5.0,
-              ),
-              ElevatedButton(
-                onPressed: () => onMoveTo3rdPage(),
-                child: const Padding(
-                  padding: EdgeInsets.all(5.0),
-                  child: Text(
-                    "Go to 3rd Page",
-                  ),
-                ),
-              ),
-              const SizedBox(
-                height: 5.0,
-              ),
-              ElevatedButton(
-                onPressed: () => onReplaceTo3rdPage(),
-                child: const Padding(
-                  padding: EdgeInsets.all(5.0),
-                  child: Text(
-                    "Replace this page with 3rd Page",
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class ThirdPage extends StatefulWidget {
-  final bool isJumped;
-
-  const ThirdPage({
-    super.key,
-    required this.isJumped,
-  });
-
-  @override
-  State<ThirdPage> createState() => _ThirdPageState();
-}
-
-class _ThirdPageState extends State<ThirdPage> {
-  String? storageResult;
-
-  @override
-  void initState() {
-    super.initState();
-
-    onCheckSecureStorage();
-  }
-
-  onCheckSecureStorage() async {
-    await LocalSecureStorage.readKey(key: "example").then((result) {
-      setState(() {
-        storageResult = result;
-      });
-    });
-  }
-
-  onCloseThisPage() => LocalRouteNavigator.closeBack(context: context);
-
-  onRedirectThisPage() => LocalRouteNavigator.redirectTo(
-    context: context,
-    target: const FirstPage(),
-  );
-
-  onClearSecureStorage() async =>
-      await LocalSecureStorage.clearKey().then((_) => onCheckSecureStorage());
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text(
-          "LFC Demo App 3rd Page",
-        ),
-      ),
-      body: ListView(
-        children: [
-          SizedBox(
-            height: MediaQuery.of(context).size.height / 4,
-          ),
-          Column(
-            children: <Widget>[
-              const Text(
-                "Welcome on 3rd page...",
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(
-                height: 10.0,
-              ),
-              Text(
-                "Text Saved on Local Secure Storage: ${storageResult ?? "-"}",
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(
-                height: 10.0,
-              ),
-              ElevatedButton(
-                onPressed: () => onClearSecureStorage(),
-                child: const Padding(
-                  padding: EdgeInsets.all(5.0),
-                  child: Text(
-                    "Clear Secure Storage",
-                  ),
-                ),
-              ),
-              const SizedBox(
-                height: 5.0,
-              ),
-              ElevatedButton(
-                onPressed: () => onCloseThisPage(),
-                child: Padding(
-                  padding: const EdgeInsets.all(5.0),
-                  child: Text(
-                    widget.isJumped == true
-                        ? "Back to 1st Page"
-                        : "Back to 2nd Page",
-                  ),
-                ),
-              ),
-              const SizedBox(
-                height: 5.0,
-              ),
-              widget.isJumped == true
-                  ? const Material()
-                  : ElevatedButton(
-                onPressed: () => onRedirectThisPage(),
-                child: const Padding(
-                  padding: EdgeInsets.all(5.0),
-                  child: Text(
-                    "Redirect to 1st Page",
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
+  if (response != null) {
+    print("Payload received: ${response.data}");
   }
 }
 ```
 
+### 2. Dialog Operations (`LocalDialogFunction`)
+
+```dart
+// Trigger an Information Alert
+void showSuccessDialog() {
+  LocalDialogFunction.okDialog(
+    context: context,
+    title: "Operation Successful",
+    contentText: "Your preferences have been updated successfully.",
+    contentAlign: TextAlign.center,
+    onClose: () => print("Dialog dismissed"),
+  );
+}
+
+// Trigger an Action Prompt Option
+void onDeletePressed() {
+  LocalDialogFunction.optionDialog(
+    context: context,
+    title: "Confirm Deletion",
+    contentText: "Are you sure you want to purge this asset permanently?",
+    acceptText: "Delete",
+    declineText: "Cancel",
+    onAccept: () => proceedDestruction(),
+    onDecline: () => traceCancellation(),
+  );
+}
+```
+
+## 3. Encrypted Key-Value Persistence (`LocalSecureStorage`)
+
+```dart
+// Write Encrypted Session Tokens
+Future<bool> onWriteAuth() async {
+  bool result = await LocalSecureStorage.writeKey(key: "auth_token", data: "JWT_STRING");
+  
+  return result;
+}
+
+// Retrieve Protected Credentials Safely 
+Future<String?> onReadAuth() async {
+  String? secureToken = await LocalSecureStorage.readKey(key: "auth_token");
+  
+  return secureToken;
+}
+
+// Purge Selected Registry Entries
+Future<bool> onDeleteAuth() async {
+  bool result = await LocalSecureStorage.deleteKey(key: "auth_token");
+  
+  return result;
+}
+
+// Total Storage Wipeout
+Future<bool> onClearKey() async {
+  bool result = await LocalSecureStorage.clearKey();
+  
+  return result;
+}
+```
+
+## 4. Contextual Route Navigation (`LocalRouteNavigator`)
+
+```dart
+// Standard Navigation Push
+void openDetailPage() {
+  LocalRouteNavigator.moveTo(
+    context: context,
+    target: const DetailScreen(),
+    callbackFunction: (result) => processReturnedValue(result),
+  );
+}
+
+// Destructive Linear Target Replacement
+void onLoginSuccess() {
+  LocalRouteNavigator.replaceWith(
+    context: context, target: const DashboardView(),
+  );
+}
+
+// Complete Navigation Stack Flush and Root Redirection
+void onLogoutSuccess() {
+  LocalRouteNavigator.redirectTo(
+    context: context, target: const LoginView(),
+  );
+}
+
+// Parameterized Stack Pop Closures
+void onPopWithResult(bool? result) {
+  LocalRouteNavigator.closeBack(
+    context: context, callbackResult: result,
+  );
+}
+```
+
+## Technical Details & Architecture
+
+Iterable TCP Lifecycle Performance: LocalAPIsRequest uses a unified, static shared Dio instance under the hood. This ensures connection reuse via connection pools, saving system memory and accelerating subsequent handshakes.
+Asynchronous Lifecycle Gap Protections: Dialog closures and network dispatches respect stateful attachment checking (Widget.mounted), guarding your runtime stack against thread safety alerts or memory leakage crashes.
+
 ## Additional information
 
-If there's any problem with this package, or you just wanted to give credits, critiques and suggestion. You can DM me on Instagram: @raznovrnf or my email: novian.shatter@gmail.com. We should discuss it together. Thanks!!!!
+Contributions, feature extensions, and architectural critiques are highly welcome. Feel free to connect or log technical feedback via our official touchpoints:
+
+Instagram: @raznovrnf 
+email: novian.shatter@gmail.com.
+
+Developed with 💙 by Razy Novian. Licensed under the MIT License.
