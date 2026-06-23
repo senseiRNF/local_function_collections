@@ -11,8 +11,8 @@ class UploadFile {
   final String fileParameterName;
   /// List of file that you want to upload.
   final List<File> files;
-  /// If your file parameter written
-  /// "file&#91;0&#93;"
+  /// If your file parameter written like
+  /// `file[0]`
   /// set to true.
   final bool isArrayKeyMethod;
 
@@ -349,8 +349,9 @@ class LocalAPIsRequest {
   /// * Use Preserve Header Case (Optional): An option that used as parameter for determined if header need to be keep on sensitve case or not.
   /// * Cancel Token (Optional): If this request run at background and needs to handle cancellation, this parameter need to be declared.
   /// * Error Handler (Optional): Handling an error request and carried DioException and StackTrace result value. You could utilize this function to handle error.
-  /// * Using Loading Dialog (Optional): Will show and handle a loading dialog from Local Dialog Function.
   /// * Upload File (Optional): An option that used when you want to upload a file, this parameter will using UploadFile class.
+  /// * On Start (Optional): Callback function triggered immediately right before the API request is executed. Usually utilized to trigger loading state or spinner in UI.
+  /// * On Finish (Optional): Callback function triggered when the API request has completely finished, whether the request succeeded, failed, or timed out. Usually utilized to dismiss loading state or spinner in UI.
   static Future<Response?> submitRequest({
     required RequestType requestType,
     required String apisURL,
@@ -359,15 +360,16 @@ class LocalAPIsRequest {
     Map<String, dynamic>? bodyData,
     int? connectionTimeoutInSecond,
     int? receiveTimeoutInSecond,
-    bool? usePreserveHeadercase,
+    bool? usePreserveHeaderCase,
     CancelToken? cancelToken,
     Function(DioException, StackTrace)? errorHandler,
-    BuildContext? usingloadingDialog,
     UploadFile? files,
+    VoidCallback? onStart,
+    VoidCallback? onFinish,
   }) async {
     _dio.options = BaseOptions(
       headers: headerRequest,
-      preserveHeaderCase: usePreserveHeadercase,
+      preserveHeaderCase: usePreserveHeaderCase,
       connectTimeout: Duration(
         seconds: connectionTimeoutInSecond ?? 30,
       ),
@@ -376,12 +378,7 @@ class LocalAPIsRequest {
       ),
     );
 
-    if (usingloadingDialog != null) {
-      LocalDialogFunction.loadingDialog(
-        context: usingloadingDialog,
-        cancellationToken: cancelToken,
-      );
-    }
+    if (onStart != null) onStart();
 
     try {
       Response? response;
@@ -426,60 +423,38 @@ class LocalAPIsRequest {
           break;
       }
 
-      if(usingloadingDialog != null && usingloadingDialog.mounted) {
-        _dismissLoadingDialog(usingloadingDialog);
-      }
-
       return response;
     } on DioException catch(err, stackTrace) {
-      if (err.type != DioExceptionType.cancel) {
-        if(usingloadingDialog != null && usingloadingDialog.mounted) {
-          _dismissLoadingDialog(usingloadingDialog);
-        }
-      }
-
       if (errorHandler != null) {
         errorHandler(err, stackTrace);
       }
 
       return err.response;
     } catch(e) {
-      if(usingloadingDialog != null && usingloadingDialog.mounted) {
-        _dismissLoadingDialog(usingloadingDialog);
-      }
-
       rethrow;
+    } finally {
+      if (onFinish != null) onFinish();
     }
   }
 
   static FormData _buildFormData(UploadFile files, Map<String, dynamic>? bodyData) {
+    final mergedData = Map<String, dynamic>.from(bodyData ?? {});
+
     if (files.isArrayKeyMethod) {
-      final tempBodyData = Map<String, dynamic>.from(bodyData ?? {});
-      tempBodyData.addEntries(
+      mergedData.addEntries(
         files.files.asMap().entries.map(
               (entry) => MapEntry("${files.fileParameterName}[${entry.key}]", MultipartFile.fromFileSync(entry.value.path)),
         ),
       );
-      return FormData.fromMap(tempBodyData);
     } else {
-      final formData = FormData();
-      if (bodyData != null) {
-        formData.fields.addAll(bodyData.entries.map((e) => MapEntry(e.key, e.value.toString())));
-      }
-      formData.files.addAll(
+      mergedData.addEntries(
         files.files.map((file) => MapEntry(
           files.fileParameterName,
           MultipartFile.fromFileSync(file.path),
         )),
       );
-      return formData;
     }
-  }
 
-  static void _dismissLoadingDialog(BuildContext context) {
-    LocalRouteNavigator.closeBack(
-      context: context,
-      callbackResult: "completed",
-    );
+    return FormData.fromMap(mergedData);
   }
 }
