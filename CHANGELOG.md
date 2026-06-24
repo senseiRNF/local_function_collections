@@ -1,54 +1,44 @@
+## 0.0.8 - 2026-06-24
+
+* 🔥 **NEW UPDATE HAS BEEN DROPPED!**
+* **Refactor (Network):** Removed `usingloadingDialog` parameter from `LocalAPIsRequest.submitRequest` and replaced it with flexible `onStart` and `onFinish` callbacks. This decouples the UI layer from network data complexity for a cleaner architecture.
+* **Fix (Network/UI):** Handled `DioExceptionType.cancel` and optimized `onFinish` execution order to prevent unexpected page dismissal or frozen loading states during network errors.
+
 ## 0.0.7 - 2026-05-25
 
-* NEW UPDATE HAS BEEN DROPPED!!!
-* Refactoring code and optimize import package, making you project compiled faster
-* Every critique and advices will be received open handedly. You could reach me on Instagram: @raznovrnf or my LinkedIn: Razy Firdana. Thanks for all the support!
-* Thanks for all the support!
+* **Refactor:** Optimized code imports and structure, leading to faster project compilation times.
 
 ## 0.0.6 - 2026-04-09
 
-* NEW UPDATE HAS BEEN DROPPED!!!
-* Now you could accesssing Dio without needed to import Dio to your project
-* Every critique and advices will be received open handedly. You could reach me on Instagram: @raznovrnf or my LinkedIn: Razy Firdana. Thanks for all the support!
-* Thanks for all the support!
-
-## 0.0.6 - 2026-04-09
-
-* NEW UPDATE HAS BEEN DROPPED!!!
-* Now you could accesssing Dio without needed to import Dio to your project
-* Every critique and advices will be received open handedly. You could reach me on Instagram: @raznovrnf or my LinkedIn: Razy Firdana. Thanks for all the support!
-* Thanks for all the support!
+* **Feature:** Re-exported Dio components globally. You can now access Dio utilities without needing to import the package manually in your main project.
 
 ## 0.0.5 - 2026-01-22
 
-* NEW UPDATE HAS BEEN DROPPED!!!
-* "files" now available to use on LocalAPIsRequest submitRequest.
-* Every critique and advices will be received open handedly. You could reach me on Instagram: @raznovrnf or my LinkedIn: Razy Firdana. Thanks for all the support!
-* Thanks for all the support!
+* **Feature:** Added `files` parameter support in `LocalAPIsRequest.submitRequest` for handling file uploads.
 
 ## 0.0.4 - 2025-11-14
 
-* NEW UPDATE HAS BEEN DROPPED!!!
-* "usePreserveHeadercase" now available to use on LocalAPIsRequest submitRequest.
-* Every critique and advices will be received open handedly. You could reach me on Instagram: @raznovrnf or my LinkedIn: Razy Firdana. Thanks for all the support!
-* Thanks for all the support!
+* **Feature:** Added `usePreserveHeaderCase` option in `LocalAPIsRequest.submitRequest`.
 
 ## 0.0.3 - 2025-11-03
 
-* NEW UPDATE HAS BEEN DROPPED!!!
-* LocalRouteNavigator now using "Widget" instead "StatefulWidget"
-* "CancelToken" now available without importing Dio separately. just call "CancellationToken" and you get "CancelToken"
-* Every critique and advices will be received open handedly. You could reach me on Instagram: @raznovrnf or my LinkedIn: Razy Firdana. Thanks for all the support!
-* Thanks for all the support!
+* **Refactor:** Migrated `LocalRouteNavigator` to use `Widget` instead of `StatefulWidget` for broader compatibility.
+* **Feature:** Re-exported `CancelToken` from Dio so it can be used directly without additional imports.
 
 ## 0.0.2 - 2025-09-18
 
-* NEW UPDATE HAS BEEN DROPPED!!!
-* We're introducing a new local function... "LocalAPIsRequest".
-* This function will help you to manage an APIs request like GET, POST, PUT and DELETE.
-* Every critique and advices will be received open handedly. You could reach me on Instagram: @raznovrnf or my LinkedIn: Razy Firdana.
-* Thanks for all the support!
+* **Feature:** Introduced `LocalAPIsRequest` helper class to manage network requests (GET, POST, PUT, DELETE).
 
 ## 0.0.1 - 2024-11-20
 
-* This is the 1st version of Local Function Collections.
+* 🎉 Initial release of Local Function Collections.
+
+---
+
+### 📢 Community & Support
+
+Every critique and advice is welcome! Feel free to reach me on:
+* **Instagram:** [@raznovrnf](https://instagram.com/raznovrnf)
+* **LinkedIn:** [Razy Firdana](https://linkedin.com/in/razyfirdana)
+
+Thanks for all the support! 🚀

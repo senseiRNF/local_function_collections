@@ -102,6 +102,8 @@ class _FirstPageState extends State<FirstPage> {
   }) async {
     CancelToken cancelToken = CancelToken();
 
+    if(!mounted) return;
+
     Response? result = await LocalAPIsRequest.submitRequest(
       requestType: type,
       apisURL: url,
@@ -112,9 +114,19 @@ class _FirstPageState extends State<FirstPage> {
         );
       },
       cancelToken: cancelToken,
-      usingloadingDialog: context,
       bodyData: {
         "test": "test_upload",
+      },
+      onStart: () {
+        LocalDialogFunction.loadingDialog(
+          context: context,
+          cancellationToken: cancelToken,
+        );
+      },
+      onFinish: () {
+        LocalRouteNavigator.closeBack(
+          context: context,
+        );
       },
       files: UploadFile(
         files: files,
