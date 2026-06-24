@@ -51,7 +51,7 @@ import 'package:local_function_collections/local_function_collections.dart';
 
 ## 1. Network Request & Multi-File Upload (`LocalAPIsRequest`)
 
-Execute network protocols (GET, POST, PUT, DELETE) with an inline loading state and central error delegation seamlessly.
+Execute network protocols (GET, POST, PUT, DELETE) with flexible loading lifecycle callbacks and centralized error delegation seamlessly.
 
 ```dart
 void makeNetworkCall(BuildContext context) async {
@@ -60,7 +60,6 @@ void makeNetworkCall(BuildContext context) async {
   Response? response = await LocalAPIsRequest.submitRequest(
     requestType: RequestType.post,
     apisURL: "[https://api.example.com/v1/upload](https://api.example.com/v1/upload)",
-    usingloadingDialog: context, // Automatically displays & dismisses loader dialog safely
     cancelToken: cancelToken,
     bodyData: {"category": "profile_pictures"},
     files: UploadFile(
@@ -68,6 +67,18 @@ void makeNetworkCall(BuildContext context) async {
       files: [File("/path/to/image1.png"), File("/path/to/image2.png")],
       isArrayKeyMethod: true, // Appends 'images[0]', 'images[1]' parameter structural keys
     ),
+    onStart: () {
+      // 💡 Trigger your custom loading layout before request hits the server
+      LocalDialogFunction.loadingDialog(
+        context: context,
+        contentText: "Uploading files...",
+        cancellationToken: cancelToken, // Enables safe manual dismissal
+      );
+    },
+    onFinish: () {
+      // 💡 Automatically dismisses loader when request completes (Success OR Error)
+      LocalRouteNavigator.closeBack(context: context);
+    },
     errorHandler: (exception, stackTrace) {
       // Handles anomalies or non-200 Status Code responses safely inside the scope
       print("Network Anomaly Caught: $exception");
