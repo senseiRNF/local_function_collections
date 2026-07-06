@@ -14,14 +14,15 @@ class LocalAPIsRequest {
   /// * Request Type (Required): Determine request type for submitting request (GET, POST, PUT or DELETE).
   /// * APIs URL (Required): URL required to reach APIs address.
   /// * Header Request (Optional): Header that set for request.
-  /// * Parameters (Required): Query Parameter that will be carried when reaching APIs address.
-  /// * Body Data (Required): Map of data that will be carried when reaching APIs address.
+  /// * Parameters (Optional): Query parameters that will be carried when reaching the API endpoint.
+  /// * Body Data (Optional): A map of data that will be carried in the request body.
   /// * Connection Timeout in Second (Optional): Timeout set in second, to determined how long request could try reach the APIs address before it's declared as timeout.
   /// * Receive Timeout in Second (Optional): Timeout set in second, to determined how long response could received before it's declared as timeout.
   /// * Use Preserve Header Case (Optional): An option that used as parameter for determined if header need to be keep on sensitve case or not.
-  /// * Cancel Token (Optional): If this request runs in the background and needs to handle cancellation, this parameter must be declared. If the request is cancelled, [errorHandler] and [onFinish] will be automatically bypassed to prevent UI race conditions.
+  /// * Cancel Token (Optional): If this request runs in the background and needs to handle cancellation, this parameter must be declared. If the request is cancelled, [errorHandler] will be automatically bypassed to prevent UI race conditions.
   /// * Error Handler (Optional): Handling an error request and carried DioException and StackTrace result value. This will NOT be triggered if the request is cancelled using [cancelToken].
   /// * Upload File (Optional): An option that used when you want to upload a file, this parameter will using UploadFile class.
+  /// * With Credentials (Optional): An option for web platforms to include credentials (such as cookies or authorization headers) in cross-site requests.
   static Future<Response?> submitRequest({
     required RequestType requestType,
     required String apisURL,
@@ -34,6 +35,7 @@ class LocalAPIsRequest {
     CancelToken? cancelToken,
     HttpErrorHandler? errorHandler,
     UploadFile? files,
+    bool withCredentials = false,
   }) async {
     final Options requestOption = Options(
       headers: headerRequest,
@@ -44,6 +46,9 @@ class LocalAPIsRequest {
       receiveTimeout: Duration(
         seconds: receiveTimeoutInSecond ?? 30,
       ),
+      extra: {
+        'withCredentials': withCredentials,
+      },
     );
 
     Response? response;

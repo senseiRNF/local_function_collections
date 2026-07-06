@@ -1,7 +1,10 @@
+* 🔥 **NEW UPDATE HAS BEEN DROPPED!**
+* **Feature (Network/Security):** Added `withCredentials` parameter to `LocalAPIsRequest.submitRequest` for web security, enabling cross-site requests to securely include cookies and session headers.
+
 ## 0.0.9 - 2026-07-06
 
 * 🔥 **NEW UPDATE HAS BEEN DROPPED!**
-* **Refactor (Network):** Removed `onStart` and `onFinsih' parameter from `LocalAPIsRequest.submitRequest`. this service are now separated from UI state in order to maintain clean architecture.
+* **Refactor (Network):** Removed `onStart` and `onFinsih` parameter from `LocalAPIsRequest.submitRequest`. this service are now separated from UI state in order to maintain clean architecture.
 
 ## 0.0.8 - 2026-06-24
 
