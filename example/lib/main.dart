@@ -117,17 +117,6 @@ class _FirstPageState extends State<FirstPage> {
       bodyData: {
         "test": "test_upload",
       },
-      onStart: () {
-        LocalDialogFunction.loadingDialog(
-          context: context,
-          cancellationToken: cancelToken,
-        );
-      },
-      onFinish: () {
-        LocalRouteNavigator.closeBack(
-          context: context,
-        );
-      },
       files: UploadFile(
         files: files,
         isArrayKeyMethod: true,

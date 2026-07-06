@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
 
-import 'package:flutter/material.dart';
 import 'package:local_function_collections/src/models/upload_file.dart';
 import 'package:local_function_collections/src/utils/local_typedefs.dart';
 
@@ -23,8 +22,6 @@ class LocalAPIsRequest {
   /// * Cancel Token (Optional): If this request runs in the background and needs to handle cancellation, this parameter must be declared. If the request is cancelled, [errorHandler] and [onFinish] will be automatically bypassed to prevent UI race conditions.
   /// * Error Handler (Optional): Handling an error request and carried DioException and StackTrace result value. This will NOT be triggered if the request is cancelled using [cancelToken].
   /// * Upload File (Optional): An option that used when you want to upload a file, this parameter will using UploadFile class.
-  /// * On Start (Optional): Callback function triggered immediately right before the API request is executed. Usually utilized to trigger loading state or spinner in UI.
-  /// * On Finish (Optional): Callback function triggered when the API request has completely finished. This will NOT be triggered if the request is cancelled using [cancelToken], as the triggering UI is assumed to have been dismissed.
   static Future<Response?> submitRequest({
     required RequestType requestType,
     required String apisURL,
@@ -37,13 +34,11 @@ class LocalAPIsRequest {
     CancelToken? cancelToken,
     HttpErrorHandler? errorHandler,
     UploadFile? files,
-    VoidCallback? onStart,
-    VoidCallback? onFinish,
   }) async {
-    _dio.options = BaseOptions(
+    final Options requestOption = Options(
       headers: headerRequest,
       preserveHeaderCase: usePreserveHeaderCase,
-      connectTimeout: Duration(
+      sendTimeout: Duration(
         seconds: connectionTimeoutInSecond ?? 30,
       ),
       receiveTimeout: Duration(
@@ -51,12 +46,9 @@ class LocalAPIsRequest {
       ),
     );
 
-    if (onStart != null) onStart();
-
-    bool isFinishCalled = false;
+    Response? response;
 
     try {
-      Response? response;
       dynamic requestData = bodyData;
 
       if (requestType == RequestType.post && files != null && files.files.isNotEmpty) {
@@ -67,6 +59,7 @@ class LocalAPIsRequest {
         case RequestType.get:
           response = await _dio.get(
             apisURL,
+            options: requestOption,
             queryParameters: parameters,
             data: bodyData,
             cancelToken: cancelToken,
@@ -75,6 +68,7 @@ class LocalAPIsRequest {
         case RequestType.post:
           response = await _dio.post(
             apisURL,
+            options: requestOption,
             queryParameters: parameters,
             data: requestData,
             cancelToken: cancelToken,
@@ -83,6 +77,7 @@ class LocalAPIsRequest {
         case RequestType.put:
           response = await _dio.put(
             apisURL,
+            options: requestOption,
             queryParameters: parameters,
             data: bodyData,
             cancelToken: cancelToken,
@@ -91,38 +86,26 @@ class LocalAPIsRequest {
         case RequestType.delete:
           response = await _dio.delete(
             apisURL,
+            options: requestOption,
             queryParameters: parameters,
             data: bodyData,
             cancelToken: cancelToken,
           );
           break;
       }
-
-      return response;
     } on DioException catch(err, stackTrace) {
       if (err.type == DioExceptionType.cancel) return err.response;
-
-      if (onFinish != null) {
-        onFinish();
-        isFinishCalled = true;
-      }
 
       if (errorHandler != null) {
         errorHandler(err, stackTrace);
       }
 
-      return err.response;
+      response = err.response;
     } catch(e) {
       rethrow;
-    } finally {
-      if (cancelToken?.isCancelled == true) {
-        /// user already cancel this request
-      } else {
-        if (!isFinishCalled) {
-          if (onFinish != null) onFinish();
-        }
-      }
     }
+
+    return response;
   }
 
   static FormData _buildFormData(UploadFile files, Map<String, dynamic>? bodyData) {
@@ -130,17 +113,15 @@ class LocalAPIsRequest {
 
     if (files.isArrayKeyMethod) {
       mergedData.addEntries(
-        files.files.asMap().entries.map(
-              (entry) => MapEntry("${files.fileParameterName}[${entry.key}]", MultipartFile.fromFileSync(entry.value.path)),
-        ),
-      );
-    } else {
-      mergedData.addEntries(
-        files.files.map((file) => MapEntry(
-          files.fileParameterName,
-          MultipartFile.fromFileSync(file.path),
+        files.files.asMap().entries.map((entry) => MapEntry(
+          "${files.fileParameterName}[${entry.key}]",
+          MultipartFile.fromFileSync(entry.value.path),
         )),
       );
+    } else {
+      mergedData[files.fileParameterName] = files.files
+          .map((file) => MultipartFile.fromFileSync(file.path))
+          .toList();
     }
 
     return FormData.fromMap(mergedData);

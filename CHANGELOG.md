@@ -1,3 +1,8 @@
+## 0.0.9 - 2026-07-06
+
+* 🔥 **NEW UPDATE HAS BEEN DROPPED!**
+* **Refactor (Network):** Removed `onStart` and `onFinsih' parameter from `LocalAPIsRequest.submitRequest`. this service are now separated from UI state in order to maintain clean architecture.
+
 ## 0.0.8 - 2026-06-24
 
 * 🔥 **NEW UPDATE HAS BEEN DROPPED!**

@@ -24,12 +24,12 @@ A robust, production-ready helper utility package for Flutter that encapsulates 
 
 ## Features
 
-| Category           | Class                 | Description                                                                                                                                 |
-|:-------------------|:----------------------|:--------------------------------------------------------------------------------------------------------------------------------------------|
-| 🌐 **Networking**  | `LocalAPIsRequest`    | Unified HTTP client powered by Dio with dynamic loading states, automatic `FormData` construction for file uploads, and flexible callbacks. |
-| 🛡️ **Storage**    | `LocalSecureStorage`  | Simple keychain/keystore encapsulation for reading, writing, and wiping highly sensitive encrypted key-value string data.                   |
-| 💬 **Dialogs**     | `LocalDialogFunction` | Pre-built alert interfaces including context-safe blocking Loaders, standard OK Informational alerts, and dynamic Option Dialogs.           |
-| 🗺️ **Navigation** | `LocalRouteNavigator` | Simplified routing patterns including basic pushes, inline replacements, complete stack-resets, and parameterized pops.                     |
+| Category           | Class                 | Description                                                                                                                       |
+|:-------------------|:----------------------|:----------------------------------------------------------------------------------------------------------------------------------|
+| 🌐 **Networking**  | `LocalAPIsRequest`    | Unified HTTP client powered by Dio and automatic `FormData` construction for file uploads.                                        |
+| 🛡️ **Storage**    | `LocalSecureStorage`  | Simple keychain/keystore encapsulation for reading, writing, and wiping highly sensitive encrypted key-value string data.         |
+| 💬 **Dialogs**     | `LocalDialogFunction` | Pre-built alert interfaces including context-safe blocking Loaders, standard OK Informational alerts, and dynamic Option Dialogs. |
+| 🗺️ **Navigation** | `LocalRouteNavigator` | Simplified routing patterns including basic pushes, inline replacements, complete stack-resets, and parameterized pops.           |
 
 ---
 
@@ -51,7 +51,7 @@ import 'package:local_function_collections/local_function_collections.dart';
 
 ## 1. Network Request & Multi-File Upload (`LocalAPIsRequest`)
 
-Execute network protocols (GET, POST, PUT, DELETE) with flexible loading lifecycle callbacks and centralized error delegation seamlessly.
+Execute network protocols (GET, POST, PUT, DELETE) with centralized error delegation seamlessly.
 
 ```dart
 void makeNetworkCall(BuildContext context) async {
@@ -67,18 +67,6 @@ void makeNetworkCall(BuildContext context) async {
       files: [File("/path/to/image1.png"), File("/path/to/image2.png")],
       isArrayKeyMethod: true, // Appends 'images[0]', 'images[1]' parameter structural keys
     ),
-    onStart: () {
-      // 💡 Trigger your custom loading layout before request hits the server
-      LocalDialogFunction.loadingDialog(
-        context: context,
-        contentText: "Uploading files...",
-        cancellationToken: cancelToken, // Enables safe manual dismissal
-      );
-    },
-    onFinish: () {
-      // 💡 Automatically dismisses loader when request completes (Success OR Error)
-      LocalRouteNavigator.closeBack(context: context);
-    },
     errorHandler: (exception, stackTrace) {
       // Handles anomalies or non-200 Status Code responses safely inside the scope
       print("Network Anomaly Caught: $exception");
