@@ -1,3 +1,5 @@
+## 0.0.10 - 2026-07-06
+
 * 🔥 **NEW UPDATE HAS BEEN DROPPED!**
 * **Feature (Network/Security):** Added `withCredentials` parameter to `LocalAPIsRequest.submitRequest` for web security, enabling cross-site requests to securely include cookies and session headers.
 
