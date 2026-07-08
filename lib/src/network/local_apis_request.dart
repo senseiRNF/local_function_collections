@@ -4,7 +4,21 @@ import 'package:local_function_collections/src/models/upload_file.dart';
 import 'package:local_function_collections/src/utils/local_typedefs.dart';
 
 class LocalAPIsRequest {
-  static final Dio _dio = Dio();
+  static final Dio _dio = Dio(
+    BaseOptions(
+      sendTimeout: Duration(seconds: 30),
+      receiveTimeout: Duration(seconds: 30),
+    ),
+  );
+
+  /// Interceptors
+  ///
+  /// This function will adding a list of Interceptors to the Dio instance.
+  /// It is recommended to call this function once (e.g., during app initialization)
+  /// to avoid duplicate interceptors.
+  static void addInterceptors(List<Interceptor> interceptors) {
+    _dio.interceptors.addAll(interceptors);
+  }
 
   /// Submit Request
   ///
@@ -40,12 +54,14 @@ class LocalAPIsRequest {
     final Options requestOption = Options(
       headers: headerRequest,
       preserveHeaderCase: usePreserveHeaderCase,
-      sendTimeout: Duration(
-        seconds: connectionTimeoutInSecond ?? 30,
-      ),
-      receiveTimeout: Duration(
-        seconds: receiveTimeoutInSecond ?? 30,
-      ),
+      sendTimeout: connectionTimeoutInSecond != null ?
+      Duration(
+        seconds: connectionTimeoutInSecond,
+      ) : _dio.options.sendTimeout,
+      receiveTimeout: receiveTimeoutInSecond != null ?
+      Duration(
+        seconds: receiveTimeoutInSecond,
+      ) : _dio.options.receiveTimeout,
       extra: {
         'withCredentials': withCredentials,
       },
