@@ -1,4 +1,4 @@
-## 0.0.101- 2026-07-08
+## 0.0.11- 2026-07-08
 
 * **Feature (Network/Interceptors):** Added `addInterceptors` method to `LocalAPIsRequest` class, allowing developers to inject custom interceptors (e.g., Auth, Logging, Performance) globally.
 * **Refactor (Network/Timeout):** Centralized default connection and receive timeouts inside `BaseOptions` (default 30 seconds) instead of request-specific `Options`.
