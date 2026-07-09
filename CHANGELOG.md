@@ -1,3 +1,11 @@
+## 0.0.12 - 2026-07-09
+
+* **Feature (Network/Security):** Added `setupCertificatePinning` method to `LocalAPIsRequest` class, enabling robust SSL/TLS certificate pinning via SHA-256 fingerprints to mitigate Man-In-The-Middle (MITM) attacks.
+* **Refactor (Network/Security):** Enforced strict handshake validation by setting `withTrustedRoots: false` to bypass the OS trust store, ensuring absolute fingerprint matching.
+* **Performance (Network):** Optimized memory allocation within `setupCertificatePinning` by isolating and pre-compiling string normalization patterns (`cleanAllowedPins`) outside the HTTP client stream loop.
+* **Fix (Network/Web):** Added `kIsWeb` guards inside `setupCertificatePinning` to prevent compilation overhead and runtime failures related to `dart:io` on browser platforms.
+* **Fix (Network/HTTP):** Streamlined `RequestType.get` processing by removing the `data` body parameter from the underlying Dio instance, ensuring strict compliance with standard HTTP GET specifications across different backend servers.
+
 ## 0.0.11- 2026-07-08
 
 * **Feature (Network/Interceptors):** Added `addInterceptors` method to `LocalAPIsRequest` class, allowing developers to inject custom interceptors (e.g., Auth, Logging, Performance) globally.
