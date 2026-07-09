@@ -1,4 +1,8 @@
+import 'dart:io';
+import 'package:crypto/crypto.dart';
 import 'package:dio/dio.dart';
+import 'package:dio/io.dart';
+import 'package:flutter/foundation.dart';
 
 import 'package:local_function_collections/src/models/upload_file.dart';
 import 'package:local_function_collections/src/utils/local_typedefs.dart';
@@ -11,9 +15,67 @@ class LocalAPIsRequest {
     ),
   );
 
+  /// Setup Certificate Pinning
+  ///
+  /// This function enables SSL/TLS certificate pinning using SHA-256 fingerprints
+  /// to protect the application against Man-In-The-Middle (MITM) attacks.
+  ///
+  /// By setting `withTrustedRoots: false`, it bypasses the OS trust store and
+  /// forces the client to strictly validate the server's handshake against the
+  /// provided fingerprints.
+  ///
+  /// Parameters:
+  /// * [allowedSHAFingerprints] (Required): A list of SHA-256 fingerprints of the
+  /// valid certificates. Characters like colons (`:`) or spaces will be automatically
+  /// stripped and normalized to lowercase.
+  ///
+  /// ⚠️ **CRITICAL WARNING:** Certificates expire and change periodically. Always provide
+  /// backup/intermediate fingerprints in the list to prevent the application from
+  /// completely failing to connect when the server certificate rotates.
+  ///
+  /// It is highly recommended to call this function once during app initialization
+  /// (e.g., in `main.dart`) after all other Dio configurations are completed.
+  static void setupCertificatePinning(List<String> allowedSHAFingerprints) {
+    if (kIsWeb) return;
+
+    if (_dio.httpClientAdapter is IOHttpClientAdapter) {
+      final cleanAllowedPins = allowedSHAFingerprints
+          .map((pin) => pin.replaceAll(':', '').replaceAll(' ', '').toLowerCase())
+          .toList();
+
+      (_dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () {
+        final HttpClient client = HttpClient(
+          context: SecurityContext(withTrustedRoots: false),
+        );
+
+        client.badCertificateCallback = (X509Certificate cert, String host, int port) {
+          final Uint8List certBytes = cert.der;
+          final Digest sha256Digest = sha256.convert(certBytes);
+          final serverFingerprint = sha256Digest.toString().toLowerCase();
+
+          if (cleanAllowedPins.contains(serverFingerprint)) {
+            return true;
+          }
+
+          assert(() {
+            debugPrint('⚠️ [LocalAPIsRequest] Certificate Pinning Mismatch!');
+            debugPrint('Expected one of: $cleanAllowedPins');
+            debugPrint('Received server fingerprint: $serverFingerprint');
+
+            return true;
+          }());
+
+          return false;
+        };
+
+        return client;
+      };
+    }
+  }
+
   /// Interceptors
   ///
-  /// This function will adding a list of Interceptors to the Dio instance.
+  /// This function will add a list of Interceptors to the Dio instance.
   /// It is recommended to call this function once (e.g., during app initialization)
   /// to avoid duplicate interceptors.
   static void addInterceptors(List<Interceptor> interceptors) {
@@ -82,7 +144,6 @@ class LocalAPIsRequest {
             apisURL,
             options: requestOption,
             queryParameters: parameters,
-            data: bodyData,
             cancelToken: cancelToken,
           );
           break;
