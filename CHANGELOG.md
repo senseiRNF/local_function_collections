@@ -1,3 +1,7 @@
+## 0.0.13 - 2026-08-06
+
+* **Feature (Network):** Enable `DioExceptionType` to be accessed inside the project without importing Dio.
+
 ## 0.0.12 - 2026-07-09
 
 * **Feature (Network/Security):** Added `setupCertificatePinning` method to `LocalAPIsRequest` class, enabling robust SSL/TLS certificate pinning via SHA-256 fingerprints to mitigate Man-In-The-Middle (MITM) attacks.

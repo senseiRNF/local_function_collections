@@ -51,13 +51,13 @@
     },
     {
       "name": "dio",
-      "rootUri": "file:///Users/intidata/.pub-cache/hosted/pub.dev/dio-5.9.2",
+      "rootUri": "file:///Users/intidata/.pub-cache/hosted/pub.dev/dio-5.11.0",
       "packageUri": "lib/",
       "languageVersion": "2.18"
     },
     {
       "name": "dio_web_adapter",
-      "rootUri": "file:///Users/intidata/.pub-cache/hosted/pub.dev/dio_web_adapter-2.1.2",
+      "rootUri": "file:///Users/intidata/.pub-cache/hosted/pub.dev/dio_web_adapter-2.2.1",
       "packageUri": "lib/",
       "languageVersion": "3.3"
     },
@@ -83,7 +83,7 @@
       "name": "flutter",
       "rootUri": "file:///Users/intidata/MSN/dev-tools/flutter/packages/flutter",
       "packageUri": "lib/",
-      "languageVersion": "3.9"
+      "languageVersion": "3.10"
     },
     {
       "name": "flutter_lints",
@@ -105,15 +105,15 @@
     },
     {
       "name": "flutter_secure_storage_linux",
-      "rootUri": "file:///Users/intidata/.pub-cache/hosted/pub.dev/flutter_secure_storage_linux-3.0.1",
+      "rootUri": "file:///Users/intidata/.pub-cache/hosted/pub.dev/flutter_secure_storage_linux-3.0.2",
       "packageUri": "lib/",
-      "languageVersion": "3.3"
+      "languageVersion": "3.5"
     },
     {
       "name": "flutter_secure_storage_platform_interface",
-      "rootUri": "file:///Users/intidata/.pub-cache/hosted/pub.dev/flutter_secure_storage_platform_interface-2.0.1",
+      "rootUri": "file:///Users/intidata/.pub-cache/hosted/pub.dev/flutter_secure_storage_platform_interface-2.0.3",
       "packageUri": "lib/",
-      "languageVersion": "3.3"
+      "languageVersion": "3.5"
     },
     {
       "name": "flutter_secure_storage_web",
@@ -131,13 +131,13 @@
       "name": "flutter_test",
       "rootUri": "file:///Users/intidata/MSN/dev-tools/flutter/packages/flutter_test",
       "packageUri": "lib/",
-      "languageVersion": "3.9"
+      "languageVersion": "3.10"
     },
     {
       "name": "flutter_web_plugins",
       "rootUri": "file:///Users/intidata/MSN/dev-tools/flutter/packages/flutter_web_plugins",
       "packageUri": "lib/",
-      "languageVersion": "3.9"
+      "languageVersion": "3.10"
     },
     {
       "name": "hooks",
@@ -153,13 +153,19 @@
     },
     {
       "name": "jni",
-      "rootUri": "file:///Users/intidata/.pub-cache/hosted/pub.dev/jni-1.0.0",
+      "rootUri": "file:///Users/intidata/.pub-cache/hosted/pub.dev/jni-1.0.3",
       "packageUri": "lib/",
       "languageVersion": "3.3"
     },
     {
       "name": "jni_flutter",
-      "rootUri": "file:///Users/intidata/.pub-cache/hosted/pub.dev/jni_flutter-1.0.1",
+      "rootUri": "file:///Users/intidata/.pub-cache/hosted/pub.dev/jni_flutter-1.0.2",
+      "packageUri": "lib/",
+      "languageVersion": "3.3"
+    },
+    {
+      "name": "jni_util",
+      "rootUri": "file:///Users/intidata/.pub-cache/hosted/pub.dev/jni_util-1.0.0",
       "packageUri": "lib/",
       "languageVersion": "3.3"
     },
@@ -207,7 +213,7 @@
     },
     {
       "name": "meta",
-      "rootUri": "file:///Users/intidata/.pub-cache/hosted/pub.dev/meta-1.17.0",
+      "rootUri": "file:///Users/intidata/.pub-cache/hosted/pub.dev/meta-1.18.0",
       "packageUri": "lib/",
       "languageVersion": "3.5"
     },
@@ -219,15 +225,15 @@
     },
     {
       "name": "objective_c",
-      "rootUri": "file:///Users/intidata/.pub-cache/hosted/pub.dev/objective_c-9.4.1",
+      "rootUri": "file:///Users/intidata/.pub-cache/hosted/pub.dev/objective_c-9.5.0",
       "packageUri": "lib/",
       "languageVersion": "3.10"
     },
     {
       "name": "package_config",
-      "rootUri": "file:///Users/intidata/.pub-cache/hosted/pub.dev/package_config-2.2.0",
+      "rootUri": "file:///Users/intidata/.pub-cache/hosted/pub.dev/package_config-3.0.0",
       "packageUri": "lib/",
-      "languageVersion": "3.4"
+      "languageVersion": "3.11"
     },
     {
       "name": "path",
@@ -255,9 +261,9 @@
     },
     {
       "name": "path_provider_linux",
-      "rootUri": "file:///Users/intidata/.pub-cache/hosted/pub.dev/path_provider_linux-2.2.1",
+      "rootUri": "file:///Users/intidata/.pub-cache/hosted/pub.dev/path_provider_linux-2.2.2",
       "packageUri": "lib/",
-      "languageVersion": "2.19"
+      "languageVersion": "3.10"
     },
     {
       "name": "path_provider_platform_interface",
@@ -299,7 +305,7 @@
       "name": "sky_engine",
       "rootUri": "file:///Users/intidata/MSN/dev-tools/flutter/bin/cache/pkg/sky_engine",
       "packageUri": "lib/",
-      "languageVersion": "3.9"
+      "languageVersion": "3.10"
     },
     {
       "name": "source_span",
@@ -333,7 +339,7 @@
     },
     {
       "name": "test_api",
-      "rootUri": "file:///Users/intidata/.pub-cache/hosted/pub.dev/test_api-0.7.10",
+      "rootUri": "file:///Users/intidata/.pub-cache/hosted/pub.dev/test_api-0.7.11",
       "packageUri": "lib/",
       "languageVersion": "3.7"
     },
@@ -363,7 +369,7 @@
     },
     {
       "name": "win32",
-      "rootUri": "file:///Users/intidata/.pub-cache/hosted/pub.dev/win32-6.3.0",
+      "rootUri": "file:///Users/intidata/.pub-cache/hosted/pub.dev/win32-6.4.0",
       "packageUri": "lib/",
       "languageVersion": "3.10"
     },
@@ -387,8 +393,8 @@
     }
   ],
   "generator": "pub",
-  "generatorVersion": "3.11.5",
+  "generatorVersion": "3.12.2",
   "flutterRoot": "file:///Users/intidata/MSN/dev-tools/flutter",
-  "flutterVersion": "3.41.9",
+  "flutterVersion": "3.44.5",
   "pubCache": "file:///Users/intidata/.pub-cache"
 }
