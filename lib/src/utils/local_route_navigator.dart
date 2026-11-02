@@ -3,68 +3,82 @@ import 'package:flutter/material.dart';
 class LocalRouteNavigator {
   /// Move To
   ///
-  /// This function serve as a command to navigate to new page and the previous page still existed but not active
+  /// Navigates to a new page, keeping the previous page in the route stack.
+  /// Returns a [Future] that completes to the result value passed when the route is popped.
+  ///
   /// Parameters:
-  /// * Context (Required): BuildContext required for Navigator function.
-  /// * Target (Required): Target is a Widget that intended as target of navigator.
-  /// * Callback Function (Optional): After going back from previous page, this parameter will run a function.
-  static Future moveTo({
+  /// * [context] (Required): BuildContext required for Navigator function.
+  /// * [target] (Required): Target Widget intended as destination.
+  /// * [callbackFunction] (Optional): Callback function executed when returning from the target page.
+  static Future<T?> moveTo<T extends Object?>({
     required BuildContext context,
     required Widget target,
-    Function? callbackFunction,
+    Function(T? result)? callbackFunction,
   }) async {
-    dynamic callbackResult = await Navigator.of(context).push(
-      MaterialPageRoute(
+    final T? callbackResult = await Navigator.of(context).push<T>(
+      MaterialPageRoute<T>(
         builder: (targetContext) => target,
       ),
     );
 
-    if(callbackFunction == null) return;
+    if (callbackFunction != null) {
+      callbackFunction(callbackResult);
+    }
 
-    callbackFunction(callbackResult);
+    return callbackResult;
   }
 
   /// Replace With
   ///
-  /// This function serve as a command to navigate to new page but the previous page are terminated
+  /// Navigates to a new page by replacing the current route.
+  /// Returns a [Future] that completes to the result value passed when the route is popped.
+  ///
   /// Parameters:
-  /// * Context (Required): BuildContext required for Navigator function.
-  /// * Target (Required): Target is a Widget that intended as target of navigator.
-  static void replaceWith({
+  /// * [context] (Required): BuildContext required for Navigator function.
+  /// * [target] (Required): Target Widget intended as destination.
+  /// * [result] (Optional): Value to return to the route that pushed this current route.
+  static Future<T?> replaceWith<T extends Object?, TO extends Object?>({
     required BuildContext context,
     required Widget target,
+    TO? result,
   }) {
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (targetContext) => target),
+    return Navigator.of(context).pushReplacement<T, TO>(
+      MaterialPageRoute<T>(builder: (targetContext) => target),
+      result: result,
     );
   }
 
   /// Redirect To
   ///
-  /// This function serve as a command to navigate to new page but all of the previous page that stacked together are terminated
+  /// Navigates to a new page and removes previous routes according to [predicate].
+  /// By default, all previous routes in the stack are removed.
+  ///
   /// Parameters:
-  /// * Context (Required): BuildContext required for Navigator function.
-  /// * Target (Required): Target is a Widget that intended as target of navigator.
-  static void redirectTo({
+  /// * [context] (Required): BuildContext required for Navigator function.
+  /// * [target] (Required): Target Widget intended as destination.
+  /// * [predicate] (Optional): Determines which routes to keep. Defaults to removing all routes (`(_) => false`).
+  static Future<T?> redirectTo<T extends Object?>({
     required BuildContext context,
     required Widget target,
+    RoutePredicate? predicate,
   }) {
-    Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (targetContext) => target),
-          (_) => false,
+    return Navigator.of(context).pushAndRemoveUntil<T>(
+      MaterialPageRoute<T>(builder: (targetContext) => target),
+      predicate ?? (_) => false,
     );
   }
 
   /// Close Back
   ///
-  /// This function serve as a command to navigate to previous page and the current page are terminated
+  /// Pops the current page from the navigation stack.
+  ///
   /// Parameters:
-  /// * Context (Required): BuildContext required for Navigator function.
-  /// * Callback Result (Optional): Callback result is a value that will be carried away after leaving current page.
-  static void closeBack({
+  /// * [context] (Required): BuildContext required for Navigator function.
+  /// * [callbackResult] (Optional): Return value passed back to the previous route.
+  static void closeBack<T extends Object?>({
     required BuildContext context,
-    dynamic callbackResult,
+    T? callbackResult,
   }) {
-    Navigator.of(context).pop(callbackResult);
+    Navigator.of(context).pop<T>(callbackResult);
   }
 }

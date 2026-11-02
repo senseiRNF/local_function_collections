@@ -1,3 +1,20 @@
+## 0.0.14 - 2026-11-02
+
+* **Feature (UI/Dialog):** Added adaptive dialog support to `LocalDialogFunction` (`okDialog`, `optionDialog`, and `loadingDialog`) — automatically rendering Material styles on Android and Cupertino styles on iOS / macOS.
+* **Fix (UI/Dialog):** Resolved context deactivation warnings and potential pop leaks in `okDialog` and `optionDialog` by properly utilizing `dialogContext`.
+* **Fix (UI/Dialog):** Added `dismissLoadingDialog` and improved `PopScope` cancellation logic to avoid accidentally cancelling `CancelToken` on standard dialog dismissal.
+* **Feature (UI/Dialog):** `optionDialog` now returns `Future<bool?>`, enabling callers to directly `await` user response in addition to callbacks.
+* **Fix (Navigation):** Fixed `LocalRouteNavigator.moveTo` dropping the popped return value; callers can now `await` the returned route result.
+* **Feature (Navigation):** Added full generic type support (`<T>`) across `moveTo`, `replaceWith`, `redirectTo`, and `closeBack`.
+* **Feature (Network):** Added `RequestType.patch` to `LocalAPIsRequest` and `RequestType` enum.
+* **Feature (Network):** Added multipart file upload support to `PUT` and `PATCH` requests in `LocalAPIsRequest.submitRequest`.
+* **Fix (Network):** Correctly mapped `connectionTimeoutInSecond` to `connectTimeout` in `Options` and added `sendTimeoutInSecond`.
+* **Feature (Network/Security):** Added optional `allowedHosts` host validation to `LocalAPIsRequest.setupCertificatePinning`.
+* **Feature (Network):** Added `LocalAPIsRequest.dio` accessor and `clearInterceptors()` method.
+* **Feature (Models):** Added `UploadFile.fromBytes`, `UploadFile.fromMultipartFiles`, and `isSingleFile` option for Flutter Web and cross-platform uploads.
+* **Feature (Storage):** Added `LocalSecureStorage.configure` for custom platform options / test mocking, plus `containsKey` and `readAll` methods.
+* **Refactor (Exports):** Re-exported essential types from `dio`, `flutter_secure_storage`, and Flutter widgets in `local_function_collections.dart`.
+
 ## 0.0.13 - 2026-08-06
 
 * **Feature (Network):** Enable `DioExceptionType` to be accessed inside the project without importing Dio.

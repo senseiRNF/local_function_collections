@@ -83,7 +83,7 @@
       "name": "flutter",
       "rootUri": "file:///Users/intidata/MSN/dev-tools/flutter/packages/flutter",
       "packageUri": "lib/",
-      "languageVersion": "3.10"
+      "languageVersion": "3.11"
     },
     {
       "name": "flutter_lints",
@@ -131,13 +131,13 @@
       "name": "flutter_test",
       "rootUri": "file:///Users/intidata/MSN/dev-tools/flutter/packages/flutter_test",
       "packageUri": "lib/",
-      "languageVersion": "3.10"
+      "languageVersion": "3.11"
     },
     {
       "name": "flutter_web_plugins",
       "rootUri": "file:///Users/intidata/MSN/dev-tools/flutter/packages/flutter_web_plugins",
       "packageUri": "lib/",
-      "languageVersion": "3.10"
+      "languageVersion": "3.11"
     },
     {
       "name": "hooks",
@@ -201,9 +201,9 @@
     },
     {
       "name": "matcher",
-      "rootUri": "file:///Users/intidata/.pub-cache/hosted/pub.dev/matcher-0.12.19",
+      "rootUri": "file:///Users/intidata/.pub-cache/hosted/pub.dev/matcher-0.12.20",
       "packageUri": "lib/",
-      "languageVersion": "3.7"
+      "languageVersion": "3.10"
     },
     {
       "name": "material_color_utilities",
@@ -213,7 +213,7 @@
     },
     {
       "name": "meta",
-      "rootUri": "file:///Users/intidata/.pub-cache/hosted/pub.dev/meta-1.18.0",
+      "rootUri": "file:///Users/intidata/.pub-cache/hosted/pub.dev/meta-1.19.0",
       "packageUri": "lib/",
       "languageVersion": "3.5"
     },
@@ -305,7 +305,7 @@
       "name": "sky_engine",
       "rootUri": "file:///Users/intidata/MSN/dev-tools/flutter/bin/cache/pkg/sky_engine",
       "packageUri": "lib/",
-      "languageVersion": "3.10"
+      "languageVersion": "3.11"
     },
     {
       "name": "source_span",
@@ -339,9 +339,9 @@
     },
     {
       "name": "test_api",
-      "rootUri": "file:///Users/intidata/.pub-cache/hosted/pub.dev/test_api-0.7.11",
+      "rootUri": "file:///Users/intidata/.pub-cache/hosted/pub.dev/test_api-0.7.12",
       "packageUri": "lib/",
-      "languageVersion": "3.7"
+      "languageVersion": "3.10"
     },
     {
       "name": "typed_data",
@@ -351,9 +351,9 @@
     },
     {
       "name": "vector_math",
-      "rootUri": "file:///Users/intidata/.pub-cache/hosted/pub.dev/vector_math-2.2.0",
+      "rootUri": "file:///Users/intidata/.pub-cache/hosted/pub.dev/vector_math-2.4.4",
       "packageUri": "lib/",
-      "languageVersion": "3.1"
+      "languageVersion": "3.10"
     },
     {
       "name": "vm_service",
@@ -393,8 +393,8 @@
     }
   ],
   "generator": "pub",
-  "generatorVersion": "3.12.2",
+  "generatorVersion": "3.13.7",
   "flutterRoot": "file:///Users/intidata/MSN/dev-tools/flutter",
-  "flutterVersion": "3.44.5",
+  "flutterVersion": "3.47.8",
   "pubCache": "file:///Users/intidata/.pub-cache"
 }

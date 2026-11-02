@@ -6,6 +6,25 @@ export 'src/widgets/local_dialog_function.dart';
 export 'src/network/local_apis_request.dart';
 
 export 'dart:io' show File;
-export 'package:dio/dio.dart' show Response, CancelToken, DioException, DioExceptionType;
-export 'package:flutter/widgets.dart' show TextAlign, BuildContext, Widget;
-export 'package:flutter_secure_storage/flutter_secure_storage.dart' show FlutterSecureStorage;
+export 'package:dio/dio.dart'
+    show
+        Response,
+        CancelToken,
+        DioException,
+        DioExceptionType,
+        MultipartFile,
+        Interceptor,
+        InterceptorsWrapper,
+        ResponseType;
+export 'package:flutter/widgets.dart'
+    show TextAlign, BuildContext, Widget, VoidCallback, RoutePredicate;
+export 'package:flutter_secure_storage/flutter_secure_storage.dart'
+    show
+        FlutterSecureStorage,
+        AndroidOptions,
+        IOSOptions,
+        LinuxOptions,
+        WindowsOptions,
+        WebOptions,
+        MacOsOptions,
+        KeychainAccessibility;

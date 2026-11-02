@@ -28,7 +28,7 @@ A robust, production-ready helper utility package for Flutter that encapsulates 
 |:-------------------|:----------------------|:----------------------------------------------------------------------------------------------------------------------------------|
 | 🌐 **Networking**  | `LocalAPIsRequest`    | Unified HTTP client powered by Dio and automatic `FormData` construction for file uploads.                                        |
 | 🛡️ **Storage**    | `LocalSecureStorage`  | Simple keychain/keystore encapsulation for reading, writing, and wiping highly sensitive encrypted key-value string data.         |
-| 💬 **Dialogs**     | `LocalDialogFunction` | Pre-built alert interfaces including context-safe blocking Loaders, standard OK Informational alerts, and dynamic Option Dialogs. |
+| 💬 **Dialogs**     | `LocalDialogFunction` | Adaptive pre-built alert interfaces (Material on Android, Cupertino on iOS/macOS) including context-safe Loaders, OK alerts, and Option Dialogs. |
 | 🗺️ **Navigation** | `LocalRouteNavigator` | Simplified routing patterns including basic pushes, inline replacements, complete stack-resets, and parameterized pops.           |
 
 ---

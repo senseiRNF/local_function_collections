@@ -1,0 +1,50 @@
+Running `(cd /Users/intidata/.pub-cache/hosted/pub.dev/objective_c-9.5.0/; ANDROID_HOME=/Users/intidata/Library/Android/sdk TMPDIR=/var/folders/hq/gwf5lxvs2z55kw_fyn9dz2d00000gn/T/ PATH=/Users/intidata/Documents/flutter/bin:/Users/intidata/.gemini/antigravity/bin:/Users/intidata/.opencode/bin:/Users/intidata/.rbenv/shims:/Users/intidata/Library/Application Support/Herd/bin/:/opt/homebrew/opt/openjdk@17/bin:/Users/intidata/MSN/dev-tools/flutter/bin:/Users/intidata/.local/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/intidata/Documents/flutter/bin:/Users/intidata/Library/Android/sdk/platform-tools:/Users/intidata/.pub-cache/bin USERPROFILE=/Users/intidata HOME=/Users/intidata /Users/intidata/MSN/dev-tools/flutter/bin/cache/dart-sdk/bin/dart --packages=/Users/intidata/Personal/local_function_collections/.dart_tool/package_config.json /Users/intidata/Personal/local_function_collections/.dart_tool/hooks_runner/objective_c/7ad245dadc/hook.dill --config=/Users/intidata/Personal/local_function_collections/.dart_tool/hooks_runner/objective_c/7ad245dadc/input.json )`.
+INFO: 2026-11-02 16:19:32.152783: Using compiler /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang from BuildInput.cCompiler.cc.
+
+INFO: 2026-11-02 16:19:32.157199: Running: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.2.sdk -target arm64-apple-darwin -mmacos-version-min=13 -c /Users/intidata/.pub-cache/hosted/pub.dev/objective_c-9.5.0/src/include/dart_api_dl.c -fpic -gline-tables-only -I src -o /Users/intidata/Personal/local_function_collections/.dart_tool/hooks_runner/shared/objective_c/build/7ad245dadc/obj/src/include/dart_api_dl.c.o
+
+INFO: 2026-11-02 16:19:32.158234: Running: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.2.sdk -target arm64-apple-darwin -mmacos-version-min=13 -c /Users/intidata/.pub-cache/hosted/pub.dev/objective_c-9.5.0/src/objective_c.c -fpic -gline-tables-only -I src -o /Users/intidata/Personal/local_function_collections/.dart_tool/hooks_runner/shared/objective_c/build/7ad245dadc/obj/src/objective_c.c.o
+
+INFO: 2026-11-02 16:19:32.158393: Running: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.2.sdk -target arm64-apple-darwin -mmacos-version-min=13 -x objective-c -fobjc-arc -c /Users/intidata/.pub-cache/hosted/pub.dev/objective_c-9.5.0/src/input_stream_adapter.m -fpic -gline-tables-only -I src -o /Users/intidata/Personal/local_function_collections/.dart_tool/hooks_runner/shared/objective_c/build/7ad245dadc/obj/src/input_stream_adapter.m.o
+
+INFO: 2026-11-02 16:19:32.158506: Running: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.2.sdk -target arm64-apple-darwin -mmacos-version-min=13 -x objective-c -fobjc-arc -c /Users/intidata/.pub-cache/hosted/pub.dev/objective_c-9.5.0/src/objective_c.m -fpic -gline-tables-only -I src -o /Users/intidata/Personal/local_function_collections/.dart_tool/hooks_runner/shared/objective_c/build/7ad245dadc/obj/src/objective_c.m.o
+
+INFO: 2026-11-02 16:19:32.158607: Running: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.2.sdk -target arm64-apple-darwin -mmacos-version-min=13 -x objective-c -fobjc-arc -c /Users/intidata/.pub-cache/hosted/pub.dev/objective_c-9.5.0/src/observer.m -fpic -gline-tables-only -I src -o /Users/intidata/Personal/local_function_collections/.dart_tool/hooks_runner/shared/objective_c/build/7ad245dadc/obj/src/observer.m.o
+
+INFO: 2026-11-02 16:19:32.158708: Running: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.2.sdk -target arm64-apple-darwin -mmacos-version-min=13 -x objective-c -fobjc-arc -c /Users/intidata/.pub-cache/hosted/pub.dev/objective_c-9.5.0/src/ns_number.m -fpic -gline-tables-only -I src -o /Users/intidata/Personal/local_function_collections/.dart_tool/hooks_runner/shared/objective_c/build/7ad245dadc/obj/src/ns_number.m.o
+
+INFO: 2026-11-02 16:19:32.158807: Running: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.2.sdk -target arm64-apple-darwin -mmacos-version-min=13 -x objective-c -fobjc-arc -c /Users/intidata/.pub-cache/hosted/pub.dev/objective_c-9.5.0/src/protocol.m -fpic -gline-tables-only -I src -o /Users/intidata/Personal/local_function_collections/.dart_tool/hooks_runner/shared/objective_c/build/7ad245dadc/obj/src/protocol.m.o
+
+INFO: 2026-11-02 16:19:32.158909: Running: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.2.sdk -target arm64-apple-darwin -mmacos-version-min=13 -x objective-c -fobjc-arc -c /Users/intidata/.pub-cache/hosted/pub.dev/objective_c-9.5.0/src/objective_c_bindings_generated.m -fpic -gline-tables-only -I src -o /Users/intidata/Personal/local_function_collections/.dart_tool/hooks_runner/shared/objective_c/build/7ad245dadc/obj/src/objective_c_bindings_generated.m.o
+
+INFO: 2026-11-02 16:19:32.404370: 
+INFO: 2026-11-02 16:19:32.404387: 
+INFO: 2026-11-02 16:19:32.404397: Generated /Users/intidata/Personal/local_function_collections/.dart_tool/hooks_runner/shared/objective_c/build/7ad245dadc/obj/src/include/dart_api_dl.c.o
+
+INFO: 2026-11-02 16:19:32.405014: 
+INFO: 2026-11-02 16:19:32.405035: 
+INFO: 2026-11-02 16:19:32.405045: Generated /Users/intidata/Personal/local_function_collections/.dart_tool/hooks_runner/shared/objective_c/build/7ad245dadc/obj/src/observer.m.o
+INFO: 2026-11-02 16:19:32.405241: 
+INFO: 2026-11-02 16:19:32.405252: 
+INFO: 2026-11-02 16:19:32.405264: Generated /Users/intidata/Personal/local_function_collections/.dart_tool/hooks_runner/shared/objective_c/build/7ad245dadc/obj/src/protocol.m.o
+
+INFO: 2026-11-02 16:19:32.717089: 
+INFO: 2026-11-02 16:19:32.717137: 
+INFO: 2026-11-02 16:19:32.717148: Generated /Users/intidata/Personal/local_function_collections/.dart_tool/hooks_runner/shared/objective_c/build/7ad245dadc/obj/src/ns_number.m.o
+
+INFO: 2026-11-02 16:19:32.732853: 
+INFO: 2026-11-02 16:19:32.732866: 
+INFO: 2026-11-02 16:19:32.732875: Generated /Users/intidata/Personal/local_function_collections/.dart_tool/hooks_runner/shared/objective_c/build/7ad245dadc/obj/src/objective_c.m.o
+
+ter.m.o
+
+INFO: 2026-11-02 16:19:32.769049: 
+INFO: 2026-11-02 16:19:32.769073: 
+INFO: 2026-11-02 16:19:32.769083: Generated /Users/intidata/Personal/local_function_collections/.dart_tool/hooks_runner/shared/objective_c/build/7ad245dadc/obj/src/objective_c_bindings_generated.m.o
+
+INFO: 2026-11-02 16:19:32.769417: Running: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -shared -Wl,-encryptable -undefined dynamic_lookup -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.2.sdk -target arm64-apple-darwin -mmacos-version-min=13 /Users/intidata/Personal/local_function_collections/.dart_tool/hooks_runner/shared/objective_c/build/7ad245dadc/obj/src/include/dart_api_dl.c.o /Users/intidata/Personal/local_function_collections/.dart_tool/hooks_runner/shared/objective_c/build/7ad245dadc/obj/src/objective_c.c.o /Users/intidata/Personal/local_function_collections/.dart_tool/hooks_runner/shared/objective_c/build/7ad245dadc/obj/src/input_stream_adapter.m.o /Users/intidata/Personal/local_function_collections/.dart_tool/hooks_runner/shared/objective_c/build/7ad245dadc/obj/src/objective_c.m.o /Users/intidata/Personal/local_function_collections/.dart_tool/hooks_runner/shared/objective_c/build/7ad245dadc/obj/src/observer.m.o /Users/intidata/Personal/local_function_collections/.dart_tool/hooks_runner/shared/objective_c/build/7ad245dadc/obj/src/ns_number.m.o /Users/intidata/Personal/local_function_collections/.dart_tool/hooks_runner/shared/objective_c/build/7ad245dadc/obj/src/protocol.m.o /Users/intidata/Personal/local_function_collections/.dart_tool/hooks_runner/shared/objective_c/build/7ad245dadc/obj/src/objective_c_bindings_generated.m.o -o /Users/intidata/Personal/local_function_collections/.dart_tool/hooks_runner/shared/objective_c/build/7ad245dadc/objective_c.dylib
+
+INFO: 2026-11-02 16:19:32.883876: 
+INFO: 2026-11-02 16:19:32.883936: 
+INFO: 2026-11-02 16:19:32.883947: Generated /Users/intidata/Personal/local_function_collections/.dart_tool/hooks_runner/shared/objective_c/build/7ad245dadc/objective_c.dylib
+
