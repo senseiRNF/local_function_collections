@@ -1,6 +1,7 @@
 export 'src/models/upload_file.dart';
 export 'src/utils/local_typedefs.dart';
 export 'src/utils/local_route_navigator.dart';
+export 'src/utils/safe_json.dart';
 export 'src/storage/local_secure_storage.dart';
 export 'src/widgets/local_dialog_function.dart';
 export 'src/network/local_apis_request.dart';
